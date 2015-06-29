@@ -2,7 +2,6 @@
 
 Orchestration of service providers, and Work Managers (WM) for tenants.
 
-
 OMS is responsible for the orchestration of services on behalf of tenants. Each tenant as a Work Manager that interacts directly with Service Providers to control tasks for its configured tenant.
 
 
