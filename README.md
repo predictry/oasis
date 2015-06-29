@@ -13,7 +13,7 @@ WMs receive messages from the OMS through a publish-subscribe service; these mes
 ###Service Providers
 Service providers (SP) are independent systems, that optionally implement a defined set of services that can be requested from WMs. Each SP publishes information about the services it can provision to WMs,  and API for job execution control (submit, status check, stop). Despite being independent, each SP has to be registered in the OMS, with information about its provisioned services. The OMS orchestrates WM configuration based on availability of SPs, and the desired configuration scenarios.
 
-![](static/oms-infrastructure.png)
+![](docs/static/oms-infrastructure.png)
 
 ##Services
 The goal of the OMS is to manage the configuration of services to be provisioned for each tenant. A service is specific operational task that may require input, and/or generates output. Examples of services are data harvesting (importing data into a data store), computing recommendations, run optimisation trials, i.e. A/B testing; SPs are geared at executing these tasks, as directed by WMs, which are configured through the OMS. 
