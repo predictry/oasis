@@ -1,0 +1,25 @@
+= Oasis Documentation
+:linkcss:
+:experimental:
+:numbered:
+:icons: font
+:source-highlighter: coderay
+:toc: left
+:docinfo1:
+
+== Getting Started
+
+What is Oasis?
+
+1. A software that does something.
+2. I don't know.
+
+How to use Oasis?
+
+[source,groovy]
+.test.groovy
+----
+println 1 + 1 
+----
+
+That's all for now.
