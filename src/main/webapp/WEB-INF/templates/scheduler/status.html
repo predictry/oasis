@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+  <head th:replace="fragments :: head">
+  </head>  
+
+  <body>
+  
+    <div th:include="fragments :: header"></div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h3>Scheduler Status</h3>
+        </div>
+        
+        <p th:if="${isStandby}">
+            <a class="btn btn-primary" role="button" th:href="@{/scheduler/start}">Start Scheduler</a>
+        </p>
+        <p th:if="${!isStandby}">    
+            <a class="btn btn-primary" role="button" th:href="@{/scheduler/standby}">Standby Scheduler</a>
+        </p>
+        
+        <div style="padding-top: 10px;">
+	        <p>
+	            Status: <span th:text="${isStandby? 'Standby': 'Running'}"></span>
+	        </p>
+	        <p>
+	            Running since: <span th:text="${runningSince}"></span>
+	        </p>
+	        <p>
+	            Number of jobs executed: <span th:text="${numOfJobsExecuted}"></span>
+	        </p>
+	        <p>
+	            Thread pool class: <span th:text="${threadPoolClass}"></span>
+	        </p>
+	        <p>
+	            Thread pool size: <span th:text="${threadPoolSize}"></span>
+	        </p>
+        </div>
+       
+    </div>
+    
+    <div th:include="fragments :: scripts"></div>
+    
+  </body>
+
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+      
+  <head th:replace="fragments :: head">
+  </head>  
+
+  <body>
+  
+    <div th:include="fragments :: header"></div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h3>Ops! Predictry has error!</h3>
+        </div>
+        
+        <p>
+            Error Message: <span th:text="${exception.getMessage()}" class="text-danger"></span>
+        </p>
+       
+    </div>
+    
+    <div th:include="fragments :: scripts"></div>
+    
+  </body>
+  
+</html>

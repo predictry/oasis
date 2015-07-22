@@ -1,5 +1,7 @@
 buildscript {
     repositories {
+        mavenLocal()
+        mavenCentral()
         jcenter()
     }
     dependencies {
@@ -21,6 +23,7 @@ version = '0.1'
 
 configurations {
     sshAntTask
+    jdbcDriver
 }
 
 task wrapper(type: Wrapper) {
@@ -42,8 +45,16 @@ dependencies {
     compile 'org.springframework:spring-webmvc:4.1.6.RELEASE'
     compile 'org.springframework:spring-aspects:4.1.6.RELEASE'
     compile 'org.springframework:spring-test:4.1.6.RELEASE'
+    
+    // Thymeleaf
+    compile 'org.thymeleaf:thymeleaf-spring4:2.1.4.RELEASE'
+    
+    // Database
+    compile 'mysql:mysql-connector-java:5.1.36'
+    jdbcDriver 'mysql:mysql-connector-java:5.1.36'
 
     // Others
+    compile 'org.quartz-scheduler:quartz:2.2.1'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.5.3'
     compile 'com.fasterxml.jackson.core:jackson-core:2.5.3'
     compile 'javax:javaee-web-api:7.0'
@@ -90,4 +101,20 @@ asciidoctor {
             'revnumber': version
         ]
     ]
+}
+
+task createQuartzTables << {
+    Properties props = new Properties()
+    props.load(new FileInputStream(file("src/main/resources/quartz.properties")))
+    URLClassLoader loader = GroovyObject.class.classLoader
+    configurations.jdbcDriver.each { File file ->
+        loader.addURL(file.toURL())
+    }
+    def sql = groovy.sql.Sql.newInstance(props['org.quartz.dataSource.quartzDataSource.URL'] + "?allowMultiQueries=true", 
+        props['org.quartz.dataSource.quartzDataSource.user'], 
+        props['org.quartz.dataSource.quartzDataSource.password'], 
+        props['org.quartz.dataSource.quartzDataSource.driver'])
+    String sqlText = file("src/main/resources/tables_mysql_innodb.sql").text
+    sql.execute(sqlText)
+    sql.close()
 }
