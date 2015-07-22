@@ -5,3 +5,7 @@ body {
 .navbar-static-top {
   margin-bottom: 19px;
 }
+
+input:invalid {
+	border: 1px solid red;
+}
