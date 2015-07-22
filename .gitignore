@@ -2,4 +2,8 @@
 /bin/
 /.gradle
 /.settings
+<<<<<<< HEAD
+=======
+.classpath
+>>>>>>> ea208ca676dceed4e0229f51f22ad71c891351c4
 .project

@@ -34,7 +34,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 		return templateResolver;
 	}
 
-	@Bean(name="templateResolver")
+	@Bean(name = "templateResolver")
 	@Profile("dev")
 	public TemplateResolver devTemplateResolver() {
 		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver();

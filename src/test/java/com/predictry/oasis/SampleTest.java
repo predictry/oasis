@@ -8,6 +8,7 @@ public class SampleTest {
 
 	@Test
 	public void testMethod() {
-		assertEquals("This should equals", "jocki", "jocki");
+		assertEquals("This should equals", true, true);
 	}
+	
 }

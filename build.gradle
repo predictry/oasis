@@ -31,7 +31,7 @@ task wrapper(type: Wrapper) {
 }
 
 war {
-    archiveName = 'oasis.war'
+    archiveName = 'predictry.oasis.war'
 }
 
 repositories {
@@ -55,6 +55,8 @@ dependencies {
 
     // Others
     compile 'org.quartz-scheduler:quartz:2.2.1'
+
+    // Others
     compile 'com.fasterxml.jackson.core:jackson-databind:2.5.3'
     compile 'com.fasterxml.jackson.core:jackson-core:2.5.3'
     compile 'javax:javaee-web-api:7.0'
@@ -75,11 +77,6 @@ dependencies {
 ant.taskdef(name: 'scp', classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp', 
     classpath: configurations.sshAntTask.asPath)
 
-
-task deployToServer(dependsOn: 'war') << {
-    ant.scp(todir: 'jocki:password@119.81.208.244:/home/jocki/apache-tomcat-8.0.23/webapps',
-        file: "${project.projectDir}/build/libs/oasis.war")
-}
 */
 
 checkstyle {

@@ -9,6 +9,12 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+/**
+ * Controller for scheduler related operations.
+ * 
+ * @author jocki
+ *
+ */
 @Controller
 @RequestMapping("/scheduler")
 public class SchedulerController {
@@ -16,7 +22,7 @@ public class SchedulerController {
 	@Autowired
 	private Scheduler scheduler;
 
-	@RequestMapping(method=RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET)
 	public String scheduler(ModelMap model) throws SchedulerException {
 		SchedulerMetaData metadata = scheduler.getMetaData();
 		model.addAttribute("runningSince", metadata.getRunningSince());
