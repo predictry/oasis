@@ -101,6 +101,7 @@ tasks.withType(FindBugs) {
 asciidoctor {
     backends = ['html5','docbook']
     baseDir = file("${projectDir}/src/asciidoc")
+    outputDir = file("${projectDir}/doc")
     options = [
         attributes: [
             'revnumber': version
