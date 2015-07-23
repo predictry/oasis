@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Controller for scheduler related operations.
@@ -49,4 +50,8 @@ public class SchedulerController {
 		return "redirect:/scheduler";
 	}
 	
+	@RequestMapping("/heartbeat")
+	public @ResponseBody String test() {
+		return "{ \"ok\": true }";
+	}
 }

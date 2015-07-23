@@ -20,6 +20,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Base URL</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -30,8 +31,12 @@
                             </a>
                         </td>
                         <td th:text="${serviceProvider.baseUrl}">http://localhost:9999/test</td>
+                        <td th:text="${serviceProvider.getStatusMessage()}" th:class="${serviceProvider.getStatus() == T(com.predictry.oasis.domain.ServiceProviderStatus).RUNNING}? text-success: text-danger">Running (2010-01-01T10:00:00)</td>
                         <td>
-                            <a class="btn btn-danger btn-sm" role="button" id="delete" th:href="@{'/serviceProvider/delete/' + ${serviceProvider.id}}">Delete</a>
+                            <a class="btn btn-sm" role="button" id="ping"
+                                th:href="@{'/serviceProvider/ping/' + ${serviceProvider.id}}">Ping</a>
+                            <a class="btn btn-danger btn-sm" role="button" id="delete" 
+                                th:href="@{'/serviceProvider/delete/' + ${serviceProvider.id}}">Delete</a>
                         </td>
                     </tr>
                 </tbody>

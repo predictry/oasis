@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.predictry.oasis.domain.ServiceProvider;
 import com.predictry.oasis.repository.ServiceProviderRepository;
+import com.predictry.oasis.service.HeartbeatService;
 
 /**
  * CRUD controller for ServiceProvider.
@@ -23,6 +24,9 @@ public class ServiceProviderController {
 
 	@Autowired
 	private ServiceProviderRepository serviceProviderRepository;
+	
+	@Autowired
+	private HeartbeatService heartbeatService;
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String serviceProvider(Model model) {
@@ -55,4 +59,11 @@ public class ServiceProviderController {
 		serviceProviderRepository.delete(id);
 		return "redirect:/serviceProvider";
 	}
+	
+	@RequestMapping(value = "/ping/{id}")
+	public String ping(@PathVariable Long id) {
+		heartbeatService.ping(id);
+		return "redirect:/serviceProvider";
+	}
+	
 }
