@@ -91,4 +91,11 @@ public class ServiceProvider {
 		return statusMessage.toString();
 	}
 
+	@Override
+	public String toString() {
+		return "ServiceProvider [id=" + id + ", name=" + name + ", baseUrl="
+				+ baseUrl + ", lastChecked=" + lastChecked + ", status="
+				+ status + "]";
+	}
+
 }

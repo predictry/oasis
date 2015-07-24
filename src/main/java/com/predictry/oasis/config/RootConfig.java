@@ -7,12 +7,9 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.SchedulerFactory;
-import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -32,17 +29,10 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories("com.predictry.oasis.repository")
+@Import(SchedulerConfig.class)
 public class RootConfig {
 	
 	public static final int TIMEOUT = 500;
-
-	@Bean
-	public Scheduler scheduler() throws SchedulerException {
-		SchedulerFactory schedulerFactory = new StdSchedulerFactory();
-		Scheduler scheduler = schedulerFactory.getScheduler();
-		scheduler.start();
-		return scheduler;
-	}
 	
 	@Bean
 	@Profile("!dev")

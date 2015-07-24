@@ -29,7 +29,7 @@ public class ServiceProviderController {
 	private HeartbeatService heartbeatService;
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String serviceProvider(Model model) {
+	public String list(Model model) {
 		model.addAttribute("serviceProviders", serviceProviderRepository.findAll());
 		return "serviceProvider/list";
 	}

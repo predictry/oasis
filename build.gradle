@@ -46,6 +46,7 @@ dependencies {
     compile 'org.springframework:spring-aspects:4.1.6.RELEASE'
     compile 'org.springframework:spring-test:4.1.6.RELEASE'
     compile 'org.springframework.data:spring-data-jpa:1.8.1.RELEASE'
+    compile 'org.springframework:spring-context-support:4.1.6.RELEASE'
     
     // Hibernate
     compile 'org.hibernate:hibernate-entitymanager:4.3.9.Final'
