@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
-    
-    <appender name="console" class="org.apache.log4j.ConsoleAppender">
-        <param name="Target" value="System.out" />
+       
+    <appender name="file" class="org.apache.log4j.rolling.RollingFileAppender">
+        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="FileNamePattern" value="${catalina.home}/logs/search-%d.log" />
+        </rollingPolicy>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d %-5p: %c - %m%n" />
         </layout>
     </appender>
-        
+   
     <logger name="org.springframework.core">
         <level value="info" />
     </logger>
@@ -28,10 +30,10 @@
     <logger name="com.predictry.oasis">
         <level value="info" />
     </logger>
-    
+         
     <root>
         <priority value="info" />
-        <appender-ref ref="console" />
+        <appender-ref ref="file" />
     </root>
     
 </log4j:configuration>

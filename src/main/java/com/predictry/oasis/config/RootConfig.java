@@ -1,16 +1,20 @@
 package com.predictry.oasis.config;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.jndi.JndiTemplate;
@@ -18,6 +22,7 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.util.Log4jConfigurer;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -33,6 +38,9 @@ import org.springframework.web.client.RestTemplate;
 public class RootConfig {
 	
 	public static final int TIMEOUT = 500;
+	
+	@Autowired
+	Environment env;
 	
 	@Bean
 	@Profile("!dev")
@@ -87,6 +95,18 @@ public class RootConfig {
         factory.setConnectTimeout(TIMEOUT);
         RestTemplate restTemplate = new RestTemplate(factory);
         return restTemplate;
+	}
+	
+	/**
+	 * Select log4j configuration file based on active Spring's profile
+	 */
+	@PostConstruct
+	public void initLog4j() throws FileNotFoundException {
+		if (env.acceptsProfiles("dev", "test")) {
+			Log4jConfigurer.initLogging("classpath:log4j-development.xml");
+		} else {
+			Log4jConfigurer.initLogging("classpath:log4j-production.xml");
+		}
 	}
 	
 }
