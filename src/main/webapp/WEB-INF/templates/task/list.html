@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+  <head th:replace="fragments :: head">
+  </head>  
+
+  <body>
+  
+    <div th:include="fragments :: header('task')"></div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h3>Task</h3>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Cron</th>
+                        <th>Service Provider</th>
+                        <th>&nbsp;</th>                     
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="task: ${tasks}">
+                        <td>
+                            <a th:href="@{'/task/entry/' + ${task.id}}">
+                                <span th:text="${task.name}">TEST</span>
+                            </a>
+                        </td>
+                        <td>
+                            <span th:text="${task.cron}">1</span>
+                        </td>
+                        <td>
+                            <span th:text="${task.serviceProvider.name}">Status</span>
+                        </td>
+                        <td>
+                            <a class="btn btn-danger btn-sm" role="button" id="delete" 
+                                th:href="@{'/task/delete/' + ${task.id}}">Delete</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <p>
+          <a class="btn btn-primary" role="button" id="add" th:href="@{/task/entry}"><span class="glyphicon glyphicon-plus"></span> Add</a>
+        </p>
+        
+    </div>
+    
+    <div th:include="fragments :: scripts"></div>
+    
+    <script th:inline="javascript">
+    $('.btn-danger').click(function() {
+    	return confirm('Are you sure?');
+    }) 
+    </script>
+    
+  </body>
+
+</html>

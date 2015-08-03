@@ -5,10 +5,16 @@ import org.quartz.JobExecutionException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+/**
+ * Basic class for OMS scheduled jobs.
+ * 
+ * @author jocki
+ *
+ */
 public abstract class OMSJob extends QuartzJobBean {
 
 	@Override
-	protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+	protected final void executeInternal(JobExecutionContext context) throws JobExecutionException {
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 		executeInContainer(context);
 		

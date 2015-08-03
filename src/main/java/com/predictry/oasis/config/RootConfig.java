@@ -68,6 +68,8 @@ public class RootConfig {
 		Map<String, ? super Object> jpaProperties = new HashMap<>();
 		jpaProperties.put("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
 		jpaProperties.put("javax.persistence.schema-generation.database.action", "drop-and-create");
+		jpaProperties.put("javax.persistence.schema-generation.drop-source", "script-then-metadata");
+		jpaProperties.put("javax.persistence.schema-generation.drop-script-source", "META-INF/sql/drop.sql");
 		emf.setJpaPropertyMap(jpaProperties);
 		
 		return emf;
@@ -98,7 +100,9 @@ public class RootConfig {
 	}
 	
 	/**
-	 * Select log4j configuration file based on active Spring's profile
+	 * Select log4j configuration file based on active Spring's profile.
+	 * 
+	 * @throws FileNotFoundException if logger configuration is not found.
 	 */
 	@PostConstruct
 	public void initLog4j() throws FileNotFoundException {

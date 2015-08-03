@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+  <head th:replace="fragments :: head">
+  </head>  
+
+  <body>
+  
+    <div th:include="fragments :: header('task')"></div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h3>Task</h3>
+        </div>
+       
+        <form id="mainForm" class="form-horizontal" th:action="@{/task/save}" th:object="${task}" method="post">
+            <input type="hidden" th:field="*{id}" id="id" />
+            <div class="form-group">
+                <label for="name" class="col-sm-2 control-label">Name:</label>
+                <div class="col-sm-10"><input type="text" class="form-control" id="name" 
+                    th:field="*{name}" th:readonly="${id != null}" required="required"/></div>
+            </div>
+            <div class="form-group">
+                <label for="cron" class="col-sm-2 control-label">Cron Schedule:</label>
+                <div class="col-sm-10"><input type="text" class="form-control" id="cron" th:field="*{cron}" required="required"/></div>
+            </div>
+            <div class="form-group">
+                <label for="serviceProvider" class="col-sm-2 control-label">Service Provider:</label>
+                <div class="col-sm-10">
+	                <select class="form-control" name="serviceProvider" id="serviceProvider" th:field="*{serviceProvider.id}" required="required">
+	                    <option th:each="sp: ${serviceProviders}" th:value="${sp.id}" th:text="${sp.name}"></option>
+	                </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="payload" class="col-sm-2 control-label">Payload (Json Format):</label>
+                <textarea class="form-control" rows="10" id="payload" th:field="*{payload}" required="required"></textarea>
+            </div>
+            <div class="pull-right">
+            <p>
+                <a class="btn btn-primary" role="button" id="save">Save</a>
+                <a class="btn" role="button" id="back" th:href="@{/task}">Back</a>
+            </p>
+            </div>
+        </form>
+    </div>
+    
+    <div th:include="fragments :: scripts"></div>
+    
+    <script th:inline="javascript">
+    $('#save').click(function() {
+    	var form = $('#mainForm')[0];
+    	if (form.checkValidity()) {
+    		form.submit();
+    	}
+    }); 
+    </script>
+    
+  </body>
+
+</html>
