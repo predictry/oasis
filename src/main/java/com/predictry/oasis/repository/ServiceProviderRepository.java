@@ -14,4 +14,6 @@ import com.predictry.oasis.domain.ServiceProvider;
 @Repository
 public interface ServiceProviderRepository extends JpaRepository<ServiceProvider, Long> {
 
+	ServiceProvider findByNameIgnoreCase(String name);
+	
 }

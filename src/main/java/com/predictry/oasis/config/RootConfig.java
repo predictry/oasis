@@ -34,7 +34,7 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories("com.predictry.oasis.repository")
-@Import(SchedulerConfig.class)
+@Import({SchedulerConfig.class, JmsConfig.class})
 public class RootConfig {
 	
 	public static final int TIMEOUT = 500;

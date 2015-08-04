@@ -3,14 +3,20 @@ package com.predictry.oasis.service;
 import java.util.List;
 import java.util.Map;
 
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
 import javax.transaction.Transactional;
 
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import com.predictry.oasis.domain.ServiceProvider;
 import com.predictry.oasis.domain.ServiceProviderStatus;
@@ -27,44 +33,68 @@ public class HeartbeatService {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(HeartbeatService.class);
 
+	@Autowired @Qualifier("topic")
+	private JmsTemplate jmsTemplate;
+	
 	@Autowired
 	private ServiceProviderRepository serviceProviderRepository;
-	
-	@Autowired
-	private RestTemplate restTemplate;
-	
+		
 	/**
-	 * Invoke a REST service call to this service provider to check
-	 * for the availability of its availability.
+	 * Send ping message to this service provider to check for the
+	 * availability of it.  The communication is asychronous so it will not
+	 * wait for the reply.
 	 * 
-	 * @param serviceProvider is the <code>ServiceProvider</code> to ping.  It should 
-	 *        be in managed state.
-	 *        
-	 * @return <code>true</code> if this service provider is running.
+	 * @param serviceProvider is the <code>ServiceProvider</code> to ping.  
+	 *        It should be in managed state.
 	 */
 	@Transactional
-	public boolean ping(ServiceProvider serviceProvider) {
-		RestTemplate restTemplate = new RestTemplate();
-		String url = serviceProvider.getBaseUrl() + ServiceProvider.URI_HEARTBEAT;
-		boolean ok = false;
-		try {
-			@SuppressWarnings("unchecked")
-			Map<String, Object> results = restTemplate.getForObject(url, Map.class);
-			if (results.containsKey("ok")) {
-				ok = (boolean) results.get("ok");
-				serviceProvider.setStatus(ok ? ServiceProviderStatus.RUNNING : 
-					ServiceProviderStatus.DOWN);
-			} else {
-				LOG.warn("[" + serviceProvider + "] is down!");
-				serviceProvider.setStatus(ServiceProviderStatus.DOWN);
+	public void ping(ServiceProvider serviceProvider) {
+		jmsTemplate.send("OMS.HEARTBEAT", new MessageCreator() {
+			
+			@Override
+			public Message createMessage(Session session) throws JMSException {
+				return session.createTextMessage("{\"id\": \"" + 
+					serviceProvider.getId().toString() + 
+					"\", \"name\": \"" + 
+					serviceProvider.getName() + "\"}");
 			}
-		} catch (Exception ex) {
-			LOG.warn("[" + serviceProvider + "] is down!");
-			serviceProvider.setStatus(ServiceProviderStatus.DOWN);
+			
+		});
+	}
+	
+	/**
+	 * Receive heartbeat message from service providers.
+	 *  
+	 * This JMS Listener that expects message in the following sample:
+	 * 
+	 * <code>
+	 * {
+	 *    "name": "SP1",
+	 *    "status": "ok"
+	 * }
+	 * </code>
+	 * 
+	 * @param map is extracted from the Json message.
+	 * @throws JMSException if there is an error while performing JMS operation.
+	 */
+	@JmsListener(destination = "OMS.REPLY", selector = "JMSType='heartbeat'")
+	public void receiveHeartbeat(Map<String, String> map) throws JMSException {
+		LOG.info("Receiving heartbeat [" + map + "]");
+		String spName = map.get("name");
+		String status = map.get("status");
+		ServiceProvider serviceProvider = serviceProviderRepository.findByNameIgnoreCase(spName);
+		if (serviceProvider == null) {
+			LOG.warn("Can't find service provider [" + spName + "]");
+		} else {
+			if ("ok".equals(status)) {
+				serviceProvider.setStatus(ServiceProviderStatus.RUNNING);
+			} else {
+				serviceProvider.setStatus(ServiceProviderStatus.DOWN);
+				LOG.warn("[" + serviceProvider + "] is down!");
+			}
+			serviceProvider.setLastChecked(LocalDateTime.now());
+			serviceProviderRepository.save(serviceProvider);
 		}
-		serviceProvider.setLastChecked(LocalDateTime.now());
-		serviceProviderRepository.save(serviceProvider);
-		return ok;
 	}
 	
 	/**
@@ -72,12 +102,10 @@ public class HeartbeatService {
 	 * for the availability.
 	 * 
 	 * @param id is the identifier of <code>ServiceProvider</code> to ping for.
-	 * 
-	 * @return <code>true</code> if this service provider is running.
 	 */
 	@Transactional
-	public boolean ping(Long id) {
-		return ping(serviceProviderRepository.findOne(id));
+	public void ping(Long id) {
+		ping(serviceProviderRepository.findOne(id));
 	}
 	
 	/**
