@@ -43,8 +43,7 @@ public class TaskController {
 	}
 	
 	@RequestMapping("/entry/{id}")
-	public String edit(Model model, @PathVariable Long id) {
-		Task task = taskService.findById(id);
+	public String edit(Model model, @PathVariable("id") Task task) {
 		model.addAttribute("task", (task == null ? new Task() : task));
 		model.addAttribute("serviceProviders", serviceProviderRepository.findAll());
 		return "task/entry";
@@ -57,8 +56,8 @@ public class TaskController {
 	}
 	
 	@RequestMapping(value = "/delete/{id}")
-	public String delete(@PathVariable Long id) throws SchedulerException {
-		taskService.delete(id);
+	public String delete(@PathVariable("id") Task task) throws SchedulerException {
+		taskService.delete(task);
 		return "redirect:/task";
 	}
 	

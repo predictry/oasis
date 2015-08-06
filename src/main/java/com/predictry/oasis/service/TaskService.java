@@ -55,8 +55,7 @@ public class TaskService {
 		}
 	}
 	
-	public void delete(Long id) throws SchedulerException {
-		Task task = taskRepository.findOne(id);
+	public void delete(Task task) throws SchedulerException {
 		if (task != null) {
 			SchedulerOperations schedulerOperations = new SchedulerOperations(scheduler, task);
 			schedulerOperations.removeSchedule(scheduler);

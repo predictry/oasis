@@ -41,8 +41,7 @@ public class ServiceProviderController {
 	}
 	
 	@RequestMapping("/entry/{id}")
-	public String edit(Model model, @PathVariable Long id) {
-		ServiceProvider serviceProvider = serviceProviderRepository.findOne(id);
+	public String edit(Model model, @PathVariable("id") ServiceProvider serviceProvider) {
 		model.addAttribute("serviceProvider", 
 			(serviceProvider == null ? new ServiceProvider() : serviceProvider));
 		return "serviceProvider/entry";
@@ -55,14 +54,14 @@ public class ServiceProviderController {
 	}
 	
 	@RequestMapping(value = "/delete/{id}")
-	public String delete(@PathVariable Long id) {
-		serviceProviderRepository.delete(id);
+	public String delete(@PathVariable("id") ServiceProvider serviceProvider) {
+		serviceProviderRepository.delete(serviceProvider);
 		return "redirect:/serviceProvider";
 	}
 	
 	@RequestMapping(value = "/ping/{id}")
-	public String ping(@PathVariable Long id) {
-		heartbeatService.ping(id);
+	public String ping(@PathVariable("id") ServiceProvider serviceProvider) {
+		heartbeatService.ping(serviceProvider);
 		return "redirect:/serviceProvider";
 	}
 	
