@@ -21,6 +21,8 @@ apply plugin: 'com.bmuschko.tomcat'
 sourceCompatibility = 1.8
 version = '0.1'
 
+def warFile = 'oms.war'
+
 configurations {
     sshAntTask
     jdbcDriver
@@ -31,7 +33,7 @@ task wrapper(type: Wrapper) {
 }
 
 war {
-    archiveName = 'oasis.war'
+    archiveName = warFile
 }
 
 repositories {
@@ -87,12 +89,6 @@ dependencies {
            "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
 }
 
-/*
-ant.taskdef(name: 'scp', classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp', 
-    classpath: configurations.sshAntTask.asPath)
-
-*/
-
 checkstyle {
     sourceSets = [sourceSets.main]
 }
@@ -129,4 +125,27 @@ task createQuartzTables << {
     String sqlText = file("src/main/resources/tables_mysql_innodb.sql").text
     sql.execute(sqlText)
     sql.close()
+}
+
+task remoteShutdownTomcat << {
+    exec {
+        executable "/usr/bin/ssh"
+        args sshTargetHost, "'${sshTargetShutdownScript}'"
+    }
+}
+
+task remoteStartTomcat << {
+    exec {
+        executable "/usr/bin/ssh"
+        args sshTargetHost, "'${sshTargetStartupScript}'"
+    }
+}
+
+task remoteDeploy(dependsOn: 'build') << {
+    // Copy War file
+    exec {
+        executable "/usr/bin/scp"
+        args "${buildDir}/libs/${warFile}", 
+            "${sshTargetHost}:${sshTargetTomcatWebapp}/${warFile}"
+    }
 }
