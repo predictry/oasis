@@ -55,7 +55,7 @@ public class JmsConfig {
 	}
 	
 	@Bean
-	public DefaultJmsListenerContainerFactory jmsListenerContainerFactory() {
+	public DefaultJmsListenerContainerFactory queueJmsListenerContainerFactory() {
 		DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
 		factory.setConnectionFactory(connectionFactory());
 		factory.setSessionTransacted(true);
@@ -64,4 +64,13 @@ public class JmsConfig {
 		return factory;
 	}
 	
+	@Bean
+	public DefaultJmsListenerContainerFactory topicJmsListenerContainerFactory() {
+		DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
+		factory.setPubSubDomain(true);
+		factory.setConnectionFactory(connectionFactory());
+		factory.setSessionTransacted(true);
+		factory.setMessageConverter(new JMSJsonMessageToMapConverter());
+		return factory;
+	}
 }

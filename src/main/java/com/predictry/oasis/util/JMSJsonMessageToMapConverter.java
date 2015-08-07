@@ -24,7 +24,7 @@ public class JMSJsonMessageToMapConverter extends MappingJackson2MessageConverte
 	private JavaType javaType; 
 	
 	public JMSJsonMessageToMapConverter() {
-		javaType = TypeFactory.defaultInstance().constructType(new TypeReference<Map<String, String>>() { });
+		javaType = TypeFactory.defaultInstance().constructType(new TypeReference<Map<String, Object>>() { });
 		setTargetType(MessageType.TEXT);
 	}
 	

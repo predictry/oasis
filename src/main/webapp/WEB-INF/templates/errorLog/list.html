@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+  <head th:replace="fragments :: head">
+  </head>  
+
+  <body>
+  
+    <div th:include="fragments :: header('errorLog')"></div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h3>Error Logs</h3>
+        </div>
+        
+        <p class="text-muted">This page is linked to Kibana dashboard at <a href="http://119.81.208.244:5601/">http://119.81.208.244:5601</a></p>.
+        
+        <iframe src="http://119.81.208.244:5601/#/discover?index:[logstash_errorlog_]YYYY_MM" 
+            style="border: 0; position:absolute; width: 80%; height: 100%; margin: 0px">
+        </iframe>                
+    </div>
+    
+ </body>
+
+</html>

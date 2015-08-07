@@ -77,11 +77,12 @@ public class HeartbeatService {
 	 * @param map is extracted from the Json message.
 	 * @throws JMSException if there is an error while performing JMS operation.
 	 */
-	@JmsListener(destination = "OMS.REPLY", selector = "JMSType='heartbeat'")
-	public void receiveHeartbeat(Map<String, String> map) throws JMSException {
+	@JmsListener(containerFactory = "queueJmsListenerContainerFactory", destination = "OMS.REPLY", 
+			selector = "JMSType='heartbeat'")
+	public void receiveHeartbeat(Map<String, Object> map) throws JMSException {
 		LOG.info("Receiving heartbeat [" + map + "]");
-		String spName = map.get("name");
-		String status = map.get("status");
+		String spName = (String) map.get("name");
+		String status = (String) map.get("status");
 		ServiceProvider serviceProvider = serviceProviderRepository.findByNameIgnoreCase(spName);
 		if (serviceProvider == null) {
 			LOG.warn("Can't find service provider [" + spName + "]");
