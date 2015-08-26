@@ -21,6 +21,8 @@
             <a class="btn btn-primary" role="button" th:href="@{/scheduler/standby}">Standby Scheduler</a>
         </p>
         
+        <p>See <a th:href="@{/doc/oasis-doc.html}">documentation</a> for more information about OMS.</p>
+        
         <div style="padding-top: 10px;">
 	        <p>
 	            Status: <span th:text="${isStandby? 'Standby': 'Running'}"></span>
