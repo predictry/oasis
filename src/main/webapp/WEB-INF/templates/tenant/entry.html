@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+  <head th:replace="fragments :: head">
+  </head>  
+
+  <body>
+  
+    <div th:include="fragments :: header('tenant')"></div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h3>Tenant</h3>
+        </div>
+       
+        <form id="mainForm" class="form-horizontal" th:action="@{/tenant/save}" th:object="${tenant}" method="post">
+            <div class="form-group">
+                <label for="name" class="col-sm-2 control-label">Tenant Id:</label>
+                <div class="col-sm-10"><input type="text" class="form-control" id="name" th:field="*{id}" required="required"/></div>
+            </div>
+            <div class="form-group">
+                <label for="name" class="col-sm-2 control-label">Name:</label>
+                <div class="col-sm-10"><input type="text" class="form-control" id="name" th:field="*{name}" required="required"/></div>
+            </div>
+            <div class="pull-right">
+            <p>
+                <a class="btn btn-primary" role="button" id="save">Save</a>
+                <a class="btn" role="button" id="back" th:href="@{/tenant}">Back</a>
+            </p>
+            </div>
+        </form>
+    </div>
+    
+    <div th:include="fragments :: scripts"></div>
+    
+    <script th:inline="javascript">
+    $('#save').click(function() {
+    	var form = $('#mainForm')[0];
+    	if (form.checkValidity()) {
+    		form.submit();
+    	}
+    }); 
+    </script>
+    
+  </body>
+
+</html>

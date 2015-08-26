@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+  <head th:replace="fragments :: head">
+  </head>  
+
+  <body>
+  
+    <div th:include="fragments :: header('tenant')"></div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h3>Tenant</h3>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Tenant Id</th>
+                        <th>Name</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="tenant: ${tenants}">
+                        <td>
+                            <a th:href="@{'/tenant/entry/' + ${tenant.id}}">
+                                <span th:text="${tenant.id}">TEST</span>
+                            </a>
+                        </td>
+                        <td th:text="${tenant.name}">TENANT NAME</td>
+                        <td>
+                            <a class="btn btn-danger btn-sm" role="button" id="delete" 
+                                th:href="@{'/tenant/delete/' + ${tenant.id}}">Delete</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <p>
+          <a class="btn btn-primary" role="button" id="add" th:href="@{/tenant/entry}"><span class="glyphicon glyphicon-plus"></span> Add</a>
+        </p>
+        
+    </div>
+    
+    <div th:include="fragments :: scripts"></div>
+    
+    <script th:inline="javascript">
+    $('.btn-danger').click(function() {
+    	return confirm('Are you sure?');
+    }) 
+    </script>
+    
+  </body>
+
+</html>

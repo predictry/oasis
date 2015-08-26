@@ -24,6 +24,7 @@
                     <ul class="nav navbar-nav">
                         <li th:class="${selectedMenu} == 'scheduler'? 'active': null"><a th:href="@{/scheduler}">Scheduler</a></li>
                         <li th:class="${selectedMenu} == 'serviceProvider'? 'active': null"><a th:href="@{/serviceProvider}">Service Provider</a></li>
+                        <li th:class="${selectedMenu} == 'tenant'? 'active': null"><a th:href="@{/tenant}">Tenant</a></li>
                         <li th:class="${selectedMenu} == 'task'? 'active': null"><a th:href="@{/task}">Task</a></li>
                         <li th:class="${selectedMenu} == 'errorLog'? 'active': null"><a th:href="@{/errorLog}">Error Logs</a></li>
                     </ul>
