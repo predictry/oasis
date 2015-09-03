@@ -12,7 +12,7 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 
 import com.predictry.oasis.job.HeartbeatJob;
-import com.predictry.oasis.job.InvokeRestJob;
+import com.predictry.oasis.job.ApplicationJob;
 
 /**
  * Configuration for Quartz Scheduler.
@@ -27,7 +27,7 @@ public class SchedulerConfig {
 	public static final String QUARTZ_HEARTBEAT_JOB_NAME = "HEARTBEAT_JOB";
 	public static final int QUARTZ_HEARTBEAT_JOB_INTERVAL = 5 * 60 * 1000; // 5 minutes
 	
-	public static final String QUARTZ_SP_INVOKE_REST_JOB_GROUP = "SP_GROUP";
+	public static final String QUARTZ_APP_GROUP = "APP_GROUP";
 	
 	@Autowired
 	private DataSource dataSource;
@@ -55,12 +55,12 @@ public class SchedulerConfig {
 	 * @return <code>JobDetailFactoryBean</code>.
 	 */
 	@Bean
-	public JobDetailFactoryBean invokeRestJobFactory() {
+	public JobDetailFactoryBean applicationJobFactory() {
 		JobDetailFactoryBean invokeRestJobFactory =
 			new JobDetailFactoryBean();
-		invokeRestJobFactory.setJobClass(InvokeRestJob.class);
-		invokeRestJobFactory.setGroup(QUARTZ_SP_INVOKE_REST_JOB_GROUP);
-		invokeRestJobFactory.setName(QUARTZ_SP_INVOKE_REST_JOB_GROUP);
+		invokeRestJobFactory.setJobClass(ApplicationJob.class);
+		invokeRestJobFactory.setGroup(QUARTZ_APP_GROUP);
+		invokeRestJobFactory.setName(QUARTZ_APP_GROUP);
 		invokeRestJobFactory.setDurability(true);
 		return invokeRestJobFactory;
 	}
@@ -97,7 +97,7 @@ public class SchedulerConfig {
 		props.put("org.quartz.jobStore.useProperties", "true");
 		schedulerFactory.setQuartzProperties(props);
 		schedulerFactory.setTriggers(heartbeatTriggerFactory().getObject());
-		schedulerFactory.setJobDetails(invokeRestJobFactory().getObject());
+		schedulerFactory.setJobDetails(applicationJobFactory().getObject());
 		return schedulerFactory;
 	}
 	

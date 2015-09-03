@@ -11,6 +11,8 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.predictry.oasis.config.SchedulerConfig;
 
@@ -23,12 +25,14 @@ import com.predictry.oasis.config.SchedulerConfig;
  */
 public class SchedulerOperations {
 
-	private Scheduler scheduler;
-	private Task task;
+	private static final Logger LOG = LoggerFactory.getLogger(SchedulerOperations.class);
 	
-	public SchedulerOperations(Scheduler scheduler, Task task) {
+	private Scheduler scheduler;
+	private Application app;
+	
+	public SchedulerOperations(Scheduler scheduler, Application app) {
 		this.scheduler = scheduler;
-		this.task = task;
+		this.app = app;
 	}
 
 	public Scheduler getScheduler() {
@@ -39,40 +43,43 @@ public class SchedulerOperations {
 		this.scheduler = scheduler;
 	}
 
-	public Task getTask() {
-		return task;
+	public Application getTask() {
+		return app;
 	}
 
-	public void setTask(Task task) {
-		this.task = task;
+	public void setTask(Application app) {
+		this.app = app;
 	}
 	
 	public void schedule(Scheduler scheduler) throws SchedulerException {
-		Asserts.notNull(task.getId(), "Id can't be null!");
-		Asserts.notNull(task.getName(), "Name can't be empty!");
-		Asserts.notNull(task.getCron(), "Cron expression can't be empty!");
+		Asserts.notNull(app.getId(), "Id can't be null!");
+		Asserts.notNull(app.getName(), "Name can't be empty!");
+		Asserts.notNull(app.getCron(), "Cron expression can't be empty!");
 		Trigger trigger = newTrigger()
-			.withIdentity(task.getName(), SchedulerConfig.QUARTZ_SP_INVOKE_REST_JOB_GROUP)
-			.withSchedule(cronSchedule(task.getCron()))
-			.forJob(SchedulerConfig.QUARTZ_SP_INVOKE_REST_JOB_GROUP, 
-					SchedulerConfig.QUARTZ_SP_INVOKE_REST_JOB_GROUP)
-			.usingJobData("task.id", String.valueOf(task.getId()))
+			.withIdentity(app.getName(), SchedulerConfig.QUARTZ_APP_GROUP)
+			.withSchedule(cronSchedule(app.getCron()))
+			.forJob(SchedulerConfig.QUARTZ_APP_GROUP, 
+					SchedulerConfig.QUARTZ_APP_GROUP)
+			.usingJobData("app.id", String.valueOf(app.getId()))
 			.build();
 		scheduler.scheduleJob(trigger);
 	}	
 	
 	public void removeSchedule(Scheduler scheduler) throws SchedulerException {
-		Asserts.notNull(task.getId(), "Id can't be null!");
-		Asserts.notNull(task.getName(), "Name can't be empty!");
-		Asserts.notNull(task.getCron(), "Cron expression can't be empty!");
+		Asserts.notNull(app.getId(), "Id can't be null!");
+		Asserts.notNull(app.getName(), "Name can't be empty!");
+		Asserts.notNull(app.getCron(), "Cron expression can't be empty!");
 		Set<TriggerKey> triggerKeys = scheduler.getTriggerKeys(groupEquals(
-			SchedulerConfig.QUARTZ_SP_INVOKE_REST_JOB_GROUP));
-		for (TriggerKey triggerKey: triggerKeys) {
-			if (triggerKey.getName().equals(task.getName())) {
-				scheduler.unscheduleJob(triggerKey);
-				break;
-			}
-		}
+			SchedulerConfig.QUARTZ_APP_GROUP));
+		triggerKeys.stream()
+			.filter(t -> t.getName().equals(app.getName()))
+			.forEach(t -> {
+				try {
+					scheduler.unscheduleJob(t);
+				} catch (Exception e) {
+					LOG.error("Error while unscheduling app job [" + t.getName() + "]", e);
+				}
+			});
 	}
 	
 }

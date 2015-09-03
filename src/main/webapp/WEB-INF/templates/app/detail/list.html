@@ -7,39 +7,35 @@
 
   <body>
   
-    <div th:include="fragments :: header('task')"></div>
+    <div th:include="fragments :: header('app')"></div>
     
     <div class="container">
         <div class="page-header">
-            <h3>Task</h3>
+            <h3>Tasks For Application</h3>
         </div>
         
         <div class="table-responsive">
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Cron</th>
-                        <th>Service Provider</th>
+                    	<th>#</th>
+                        <th>Json Payload</th>
                         <th>&nbsp;</th>                     
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="task: ${tasks}">
+                    <tr th:each="task,iterStat: ${app.tasks}">
+                    	<td>
+                    		<a th:href="@{/app/{id}/detail/entry/{index}(id=${app.id}, index=${iterStat.index})}">
+                    			<span th:text="${iterStat.count}">1</span>
+                    		</a>
+                    	</td>
                         <td>
-                            <a th:href="@{'/task/entry/' + ${task.id}}">
-                                <span th:text="${task.name}">TEST</span>
-                            </a>
-                        </td>
-                        <td>
-                            <span th:text="${task.cron}">1</span>
-                        </td>
-                        <td>
-                            <span th:text="${task.serviceProvider.name}">Status</span>
+                            <span th:text="${task.payload}">Payload</span>
                         </td>
                         <td>
                             <a class="btn btn-danger btn-sm" role="button" id="delete" 
-                                th:href="@{'/task/delete/' + ${task.id}}">Delete</a>
+                                th:href="@{'/app/' + ${app.id} + '/detail/delete/' + ${iterStat.index}}">Delete</a>
                         </td>
                     </tr>
                 </tbody>
@@ -47,7 +43,8 @@
         </div>
         
         <p>
-          <a class="btn btn-primary" role="button" id="add" th:href="@{/task/entry}"><span class="glyphicon glyphicon-plus"></span> Add</a>
+          <a class="btn btn-primary" role="button" id="add" th:href="@{/app/{id}/detail/entry(id=${app.id})}"><span class="glyphicon glyphicon-plus"></span> Add</a>
+          <a class="btn" role="button" id="back" th:href="@{/app/entry/{id}(id=${app.id})}">Back</a>
         </p>
         
     </div>

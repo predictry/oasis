@@ -10,13 +10,14 @@ import org.slf4j.LoggerFactory;
  * @author stewart
  *
  */
-public class InvokeRestJob extends OMSJob {
+public class ApplicationJob extends OMSJob {
 
-	private static final Logger LOG = LoggerFactory.getLogger(InvokeRestJob.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ApplicationJob.class);
 
 	@Override
 	public void executeInContainer(JobExecutionContext context) {
-		LOG.info("Starting executing service provider job...");
+		Long appId = context.getJobDetail().getJobDataMap().getLong("app.id");
+		LOG.info("Starting executing application [" + appId + "]");
 	}
 
 }

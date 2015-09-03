@@ -7,14 +7,14 @@
 
   <body>
   
-    <div th:include="fragments :: header('task')"></div>
+    <div th:include="fragments :: header('app')"></div>
     
     <div class="container">
         <div class="page-header">
-            <h3>Task</h3>
+            <h3>Application</h3>
         </div>
        
-        <form id="mainForm" class="form-horizontal" th:action="@{/task/save}" th:object="${task}" method="post">
+        <form id="mainForm" class="form-horizontal" th:action="@{/app/save}" th:object="${app}" method="post">
             <input type="hidden" th:field="*{id}" id="id" />
             <div class="form-group">
                 <label for="name" class="col-sm-2 control-label">Name:</label>
@@ -22,8 +22,12 @@
                     th:field="*{name}" th:readonly="${id != null}" required="required"/></div>
             </div>
             <div class="form-group">
-                <label for="cron" class="col-sm-2 control-label">Cron Schedule:</label>
-                <div class="col-sm-10"><input type="text" class="form-control" id="cron" th:field="*{cron}" required="required"/></div>
+                <label for="tenant" class="col-sm-2 control-label">Tenant:</label>
+                <div class="col-sm-10">
+	                <select class="form-control" name="tenant" id="tenant" th:field="*{tenant.id}">
+	                    <option th:each="tenant: ${tenants}" th:value="${tenant.id}" th:text="${tenant.name}"></option>
+	                </select>
+                </div>
             </div>
             <div class="form-group">
                 <label for="serviceProvider" class="col-sm-2 control-label">Service Provider:</label>
@@ -34,13 +38,14 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="payload" class="col-sm-2 control-label">Payload (Json Format):</label>
-                <textarea class="form-control" rows="10" id="payload" th:field="*{payload}" required="required"></textarea>
+                <label for="cron" class="col-sm-2 control-label">Cron Schedule:</label>
+                <div class="col-sm-10"><input type="text" class="form-control" id="cron" th:field="*{cron}" required="required"/></div>
             </div>
             <div class="pull-right">
             <p>
                 <a class="btn btn-primary" role="button" id="save">Save</a>
-                <a class="btn" role="button" id="back" th:href="@{/task}">Back</a>
+                <a class="btn btn-primary" role="button" id="detail" th:href="@{/app/{id}/detail(id=${app.id})}" th:if="${id != null}">Task Detail...</a>
+                <a class="btn" role="button" id="back" th:href="@{/app}">Back</a>
             </p>
             </div>
         </form>

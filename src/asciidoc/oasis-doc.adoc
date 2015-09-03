@@ -306,34 +306,31 @@ looks like:
 {
    "name": "Normal_Execution",                               // <1>
    "cron": "0 15 10 * * ? *",                                // <2>
-   "tasks": [                                                // <3>
-      {                                                      // <4>
-        "timeout": 30000,                                    
-        "task": {                                            // <5>
-           "type": "trim-data",
-           "date": "${NOW}",                                 // <6>
-           "startingDate": "${NOW}",
-           "period": 10
-        }
+   "serviceProvider": "sp1",                                 // <3>
+   "tasks": [                                                // <4>
+      {                                                      // <5>
+        "timeout": 30000,                                    // <6>
+        "type": "trim-data",
+        "date": "${NOW}",                                    // <7>
+        "startingDate": "${NOW}",
+        "period": 10
       },
-      {                                                      // <7>
+      {                                                      // <8>
          "timeout": 70000,
-         "task": {
-           "type": "compute-recommendation",
-           "date": "${NOW}",
-           "algorithm": {
-             "name": "algo-1",
-             "params": {
+         "type": "compute-recommendation",
+         "date": "${NOW}",
+         "algorithm": {
+            "name": "algo-1",
+            "params": {
                "param1": "value1",
                "param2": "value2"
-             }
-           },
-           "output": {
-             "type": "s3",
-             "bucket": "exercises",
-             "prefix": "photos/2006/January/sample.jpg",
-             "region": "eu-west-1"
-           }
+            }
+         },
+         "output": {
+            "type": "s3",
+            "bucket": "exercises",
+            "prefix": "photos/2006/January/sample.jpg",
+            "region": "eu-west-1"
          }
       }
    ]
@@ -341,11 +338,12 @@ looks like:
 ---- 
 <1> The name for this configuration.
 <2> The cron schedule for this configuration.
-<3> List of tasks to be executed.  These tasks will be executed in orders.
-<4> The first task.
-<5> Payload for the first task.
-<6> Configuration also accepts expression.
-<7> The second task.
+<3> The service provider that will be used.
+<4> List of tasks to be executed.  These tasks will be executed in orders.
+<5> The first task.
+<6> Payload for the first task.
+<7> Configuration also accepts expression.
+<8> The second task.
 
 Because tenant can have different configurations, a separate configuration can be created for task that runs in 
 different cron schedule.  For example, `import-record` can be scheduled to run hourly:

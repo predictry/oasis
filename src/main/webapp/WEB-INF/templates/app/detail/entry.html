@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+  <head th:replace="fragments :: head">
+  </head>  
+
+  <body>
+  
+    <div th:include="fragments :: header('app')"></div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h3>Tasks For Application</h3>
+        </div>
+       
+        <form id="mainForm" class="form-horizontal" th:action="${index!=null}?@{/app/{id}/detail/save/{index}(id=${app.id}, index=${index})}:@{/app/{id}/detail/save(id=${app.id})}" th:object="${task}" method="post">
+            <div class="form-group">
+                <label for="payload" class="col-sm-2 control-label">Payload:</label>
+                <div class="col-sm-10">
+                	<textarea class="form-control" rows="20" th:field="*{payload}" required="required"></textarea>
+                </div>
+            </div>    
+            <div class="pull-right">
+            <p>
+                <a class="btn btn-primary" role="button" id="save">Save</a>
+                <a class="btn" role="button" id="back" th:href="@{/app/{id}/detail(id=${app.id})}">Back</a>
+            </p>
+            </div>
+        </form>
+    </div>
+    
+    <div th:include="fragments :: scripts"></div>
+    
+    <script th:inline="javascript">
+    $('#save').click(function() {
+    	var form = $('#mainForm')[0];
+    	if (form.checkValidity()) {
+    		form.submit();
+    	}
+    }); 
+    </script>
+    
+  </body>
+
+</html>

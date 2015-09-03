@@ -30,10 +30,6 @@
 
         <module name="ConstantNameCheck" />
 
-        <module name="LineLength">
-            <property name="max" value="120" />
-        </module>
-
         <module name="LeftCurly" />
 
         <module name="RightCurly" />
@@ -66,7 +62,9 @@
 
         <module name="EqualsAvoidNull" />
 
-        <module name="MagicNumber" />
+        <module name="MagicNumber">
+        	<property name="ignoreAnnotation" value="true" />
+        </module>
 
         <module name="SimplifyBooleanExpression" />
 
