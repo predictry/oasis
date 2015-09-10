@@ -11,8 +11,9 @@ import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 
-import com.predictry.oasis.job.HeartbeatJob;
 import com.predictry.oasis.job.ApplicationJob;
+import com.predictry.oasis.job.HeartbeatJob;
+import com.predictry.oasis.job.MetricJob;
 
 /**
  * Configuration for Quartz Scheduler.
@@ -26,6 +27,10 @@ public class SchedulerConfig {
 	public static final String QUARTZ_HEARTBEAT_JOB_GROUP = "HEARTBEAT_GROUP";
 	public static final String QUARTZ_HEARTBEAT_JOB_NAME = "HEARTBEAT_JOB";
 	public static final int QUARTZ_HEARTBEAT_JOB_INTERVAL = 5 * 60 * 1000; // 5 minutes
+	
+	public static final String QUARTZ_METRIC_JOB_GROUP = "METRIC_GROUP";
+	public static final String QUARTZ_METRIC_JOB_NAME = "METRIC_JOB";
+	public static final int QUARTZ_METRIC_JOB_INTERVAL = 60 * 60 * 1000; // 60 minutes
 	
 	public static final String QUARTZ_APP_GROUP = "APP_GROUP";
 	
@@ -47,6 +52,21 @@ public class SchedulerConfig {
 		heartbeatJobFactory.setName(QUARTZ_HEARTBEAT_JOB_NAME);
 		heartbeatJobFactory.setDurability(true);
 		return heartbeatJobFactory;
+	}
+	
+	/**
+	 * Bean definition to execute metric job periodically.
+	 * 
+	 * @return <code>JobDetailFactoryBean</code>.
+	 */
+	@Bean
+	public JobDetailFactoryBean metricJobFactory() {
+		JobDetailFactoryBean metricJobFactory = new JobDetailFactoryBean();
+		metricJobFactory.setJobClass(MetricJob.class);
+		metricJobFactory.setGroup(QUARTZ_METRIC_JOB_GROUP);
+		metricJobFactory.setName(QUARTZ_METRIC_JOB_NAME);
+		metricJobFactory.setDurability(true);
+		return metricJobFactory;
 	}
 	
 	/**
@@ -81,6 +101,19 @@ public class SchedulerConfig {
 	}
 	
 	/**
+	 * Bean definition for Quartz Trigger that executes metric service.
+	 * 
+	 * @return <code>SimpleTriggerFactoryBean</code>.
+	 */
+	@Bean
+	public SimpleTriggerFactoryBean metricTriggerFactory() {
+		SimpleTriggerFactoryBean metricTriggerFactory = new SimpleTriggerFactoryBean();
+		metricTriggerFactory.setJobDetail(metricJobFactory().getObject());
+		metricTriggerFactory.setRepeatInterval(QUARTZ_METRIC_JOB_INTERVAL);
+		return metricTriggerFactory;
+	}
+	
+	/**
 	 * Bean definition for creating Quartz scheduler instance.
 	 *  
 	 * @return <code>SchedulerFactoryBean</code>.
@@ -96,8 +129,8 @@ public class SchedulerConfig {
 		props.put("org.quartz.jobStore.misfireThreshold", "60000");
 		props.put("org.quartz.jobStore.useProperties", "true");
 		schedulerFactory.setQuartzProperties(props);
-		schedulerFactory.setTriggers(heartbeatTriggerFactory().getObject());
-		schedulerFactory.setJobDetails(applicationJobFactory().getObject());
+		schedulerFactory.setTriggers(heartbeatTriggerFactory().getObject(), metricTriggerFactory().getObject());
+		schedulerFactory.setJobDetails(applicationJobFactory().getObject(), metricJobFactory().getObject());
 		return schedulerFactory;
 	}
 	

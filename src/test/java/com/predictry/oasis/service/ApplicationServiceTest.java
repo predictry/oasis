@@ -11,34 +11,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.transaction.Transactional;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import com.predictry.oasis.config.SchedulerConfig;
-import com.predictry.oasis.config.TestConfig;
 import com.predictry.oasis.domain.Application;
 import com.predictry.oasis.domain.ServiceProvider;
 import com.predictry.oasis.domain.Task;
 import com.predictry.oasis.job.ApplicationJob;
 import com.predictry.oasis.repository.ServiceProviderRepository;
 
-@RunWith(SpringJUnit4ClassRunner.class) @ActiveProfiles("test")
-@ContextConfiguration(classes=TestConfig.class, loader=AnnotationConfigContextLoader.class)
-@Transactional
-public class ApplicationServiceTest {
+public class ApplicationServiceTest extends TestCase {
 	
 	@Autowired
 	private ServiceProviderRepository serviceProviderRepository;
