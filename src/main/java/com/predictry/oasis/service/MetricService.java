@@ -43,6 +43,9 @@ public class MetricService {
 	@Autowired
 	private ObjectMapper objectMapper;
 	
+	@Autowired
+	private S3Service s3Service;
+	
 	/**
 	 * Calculate the total storage of data stored in harddisk (Neo4j) and S3.
 	 * This method will send the result to measurement topic.
@@ -50,19 +53,26 @@ public class MetricService {
 	 */
 	@SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
 	public void measureStorage() {
-		long total = 0L;
+		long totalNeo4j = 0L, totalS3Trackings = 0L;
 		
 		// Calculate Neo4J storage size
-		
 		File neo4jDataDir = new File(NEO4J_DATA_DIR);
 		if (neo4jDataDir.exists()) {
-			total = FileUtils.sizeOfDirectory(neo4jDataDir);
+			totalNeo4j = FileUtils.sizeOfDirectory(neo4jDataDir);
 		}
-		LOG.info("neo4j total storage is " + total);
+		LOG.info("neo4j total storage is " + totalNeo4j);
+		
+		// Calculate S3 'trackings' bucket
+		totalS3Trackings = s3Service.bucketSize("trackings");
 		
 		StorageMetric storageMetric = new StorageMetric();
 		storageMetric.setTime(LocalDateTime.now());
-		storageMetric.addStorage("neo4j", (double) total);
+		if (totalNeo4j > 0) {
+			storageMetric.addStorage("neo4j", (double) totalNeo4j);
+		}
+		if (totalS3Trackings > 0) {
+			storageMetric.addStorage("s3", (double) totalS3Trackings);
+		}
 		jmsTemplate.send("ADMIN.METRIC", new JsonMessageCreator(objectMapper, storageMetric));
 	}
 	

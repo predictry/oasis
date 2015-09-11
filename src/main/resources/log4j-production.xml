@@ -4,7 +4,7 @@
        
     <appender name="file" class="org.apache.log4j.rolling.RollingFileAppender">
         <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-            <param name="FileNamePattern" value="${catalina.home}/logs/search-%d.log" />
+            <param name="FileNamePattern" value="${catalina.home}/logs/oms-%d.log" />
         </rollingPolicy>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d %-5p: %c - %m%n" />

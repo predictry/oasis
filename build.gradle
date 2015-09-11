@@ -58,7 +58,8 @@ dependencies {
     compile 'org.springframework:spring-jms:4.1.6.RELEASE'
     
     // Amazon SDK
-    compile 'com.amazonaws:aws-java-sdk-s3:1.10.16'
+    compile 'com.amazonaws:aws-java-sdk-s3:1.10.17'
+    compile 'com.amazonaws:aws-java-sdk-cloudwatch:1.10.17'
 
     // Hibernate
     compile 'org.hibernate:hibernate-entitymanager:4.3.9.Final'
@@ -96,6 +97,7 @@ dependencies {
     compile 'com.google.code.findbugs:annotations:3.0.0'
     runtime 'org.slf4j:slf4j-log4j12:1.7.12'
     runtime 'log4j:log4j:1.2.15'
+    compile 'log4j:apache-log4j-extras:1.0'
 
     sshAntTask 'org.apache.ant:ant-jsch:1.9.5', 'com.jcraft:jsch:0.1.53'
     
