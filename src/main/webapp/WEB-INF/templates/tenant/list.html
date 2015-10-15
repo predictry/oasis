@@ -20,6 +20,7 @@
                     <tr>
                         <th>Tenant Id</th>
                         <th>Name</th>
+                        <th>Status</th>
                         <th>&nbsp;</th>
                     </tr>
                 </thead>
@@ -31,6 +32,7 @@
                             </a>
                         </td>
                         <td th:text="${tenant.name}">TENANT NAME</td>
+                        <td th:text="${tenant.status}">STATUS</td>
                         <td>
                             <a class="btn btn-danger btn-sm" role="button" id="delete" 
                                 th:href="@{'/tenant/delete/' + ${tenant.id}}">Delete</a>

@@ -2,6 +2,7 @@ package com.predictry.oasis.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -19,6 +20,9 @@ public class Tenant {
 
 	@NotBlank
 	private String name;
+	
+	@NotNull
+	private TenantStatus status = TenantStatus.ENABLED;
 
 	public String getId() {
 		return id;
@@ -34,6 +38,14 @@ public class Tenant {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public TenantStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(TenantStatus status) {
+		this.status = status;
 	}
 	
 }
