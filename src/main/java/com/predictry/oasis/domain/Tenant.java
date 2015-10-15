@@ -23,6 +23,13 @@ public class Tenant {
 	
 	@NotNull
 	private TenantStatus status = TenantStatus.ENABLED;
+	
+	public Tenant(String id, String name) {
+		this.id = id;
+		this.name = name;
+	}
+	
+	public Tenant() { }
 
 	public String getId() {
 		return id;
