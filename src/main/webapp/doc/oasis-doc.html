@@ -74,19 +74,15 @@ executing these tasks which are configured through the OMS.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Service provider is expected to reply message from OMS with message that looks like:</p>
+<p>When service provider start running the job, it is expected to send message to OMS that looks like:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay"><code class="json language-json">{
-  <span class="key"><span class="delimiter">&quot;</span><span class="content">serviceProvider</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">SP1</span><span class="delimiter">&quot;</span></span>    <i class="conum" data-value="1"></i><b>(1)</b>
-  <span class="key"><span class="delimiter">&quot;</span><span class="content">status</span><span class="delimiter">&quot;</span></span>: <span class="integer">200</span>,              <i class="conum" data-value="2"></i><b>(2)</b>
-  <span class="key"><span class="delimiter">&quot;</span><span class="content">task</span><span class="delimiter">&quot;</span></span>: {
-     <span class="key"><span class="delimiter">&quot;</span><span class="content">id</span><span class="delimiter">&quot;</span></span>: <span class="integer">123</span>,               <i class="conum" data-value="3"></i><b>(3)</b>
-     <span class="key"><span class="delimiter">&quot;</span><span class="content">state</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">DONE</span><span class="delimiter">&quot;</span></span>,         <i class="conum" data-value="4"></i><b>(4)</b>
-     <span class="key"><span class="delimiter">&quot;</span><span class="content">waitingTime</span><span class="delimiter">&quot;</span></span>: <span class="integer">500</span>,      <i class="conum" data-value="5"></i><b>(5)</b>
-     <span class="key"><span class="delimiter">&quot;</span><span class="content">executionTime</span><span class="delimiter">&quot;</span></span>: <span class="integer">1000</span>    <i class="conum" data-value="6"></i><b>(6)</b>
-  }
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">serviceProvider</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">SP1</span><span class="delimiter">&quot;</span></span>,       <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">jobId</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">123</span><span class="delimiter">&quot;</span></span>,                 <i class="conum" data-value="2"></i><b>(2)</b>
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">event</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">START</span><span class="delimiter">&quot;</span></span>,               <i class="conum" data-value="3"></i><b>(3)</b>
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">time</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">2015-12-01T09:30:00</span><span class="delimiter">&quot;</span></span>   <i class="conum" data-value="4"></i><b>(4)</b>
 }</code></pre>
 </div>
 </div>
@@ -98,40 +94,28 @@ executing these tasks which are configured through the OMS.</p>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Status is HTTP status code.</td>
+<td>This is the associated job id.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>This is the task id associated for the response, or <code>null</code> if this is heartbeat.</td>
+<td>Event should be <code>"START"</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>State can be <code>"DONE"</code>, <code>"RUNNING"</code>, <code>"CANCELLED"</code>, or <code>"FAILED"</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Waiting time before executing the task in milliseconds.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>For <code>"DONE"</code> state, this is the execution time in milliseconds.</td>
+<td>The time when this event occured.</td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>If there is a problem when executing a task, service provider should reply with message like:</p>
+<p>When service provider finished executing the job, it is expected to send message to OMS that looks like:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay"><code class="json language-json">{
-   <span class="key"><span class="delimiter">&quot;</span><span class="content">serviceProvider</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">SP1</span><span class="delimiter">&quot;</span></span>               <i class="conum" data-value="1"></i><b>(1)</b>
-   <span class="key"><span class="delimiter">&quot;</span><span class="content">status</span><span class="delimiter">&quot;</span></span>: <span class="integer">501</span>,                         <i class="conum" data-value="2"></i><b>(2)</b>
-   <span class="key"><span class="delimiter">&quot;</span><span class="content">message</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">task is not supported</span><span class="delimiter">&quot;</span></span>,    <i class="conum" data-value="3"></i><b>(3)</b>
-   <span class="key"><span class="delimiter">&quot;</span><span class="content">task</span><span class="delimiter">&quot;</span></span>: {
-      <span class="key"><span class="delimiter">&quot;</span><span class="content">id</span><span class="delimiter">&quot;</span></span>: <span class="integer">123</span>,                          <i class="conum" data-value="4"></i><b>(4)</b>
-      <span class="key"><span class="delimiter">&quot;</span><span class="content">state</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">FAILED</span><span class="delimiter">&quot;</span></span>                   <i class="conum" data-value="5"></i><b>(5)</b>
-      <span class="key"><span class="delimiter">&quot;</span><span class="content">message</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">Specific error message</span><span class="delimiter">&quot;</span></span> <i class="conum" data-value="6"></i><b>(6)</b>
-   }
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">serviceProvider</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">SP1</span><span class="delimiter">&quot;</span></span>,         <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">jobId</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">123</span><span class="delimiter">&quot;</span></span>,                   <i class="conum" data-value="2"></i><b>(2)</b>
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">event</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">SUCCESS</span><span class="delimiter">&quot;</span></span>,               <i class="conum" data-value="3"></i><b>(3)</b>
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">time</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">2015-12-01T10:00:00</span><span class="delimiter">&quot;</span></span>     <i class="conum" data-value="4"></i><b>(4)</b>
 }</code></pre>
 </div>
 </div>
@@ -139,27 +123,86 @@ executing these tasks which are configured through the OMS.</p>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The name of service provider that is responsing.</td>
+<td>The name of service provider that is responding.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Status is HTTP status code.</td>
+<td>This is the associated job id.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Information message about the response.</td>
+<td>Event should be <code>"SUCCESS"</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>The identifier of current task.</td>
+<td>The time when this event occured.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>As an additional information, service provider can also provide information about execution time by sending
+message that looks like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay"><code class="json language-json">{
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">serviceProvider</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">SP1</span><span class="delimiter">&quot;</span></span>,              <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">jobId</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">123</span><span class="delimiter">&quot;</span></span>,                        <i class="conum" data-value="2"></i><b>(2)</b>
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">processing_time</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">60500</span><span class="delimiter">&quot;</span></span>             <i class="conum" data-value="3"></i><b>(3)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The name of service provider.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The id of job.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Time spends for executing this task in seconds.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If service provider failed to execute the job, it is expected to send message to OMS that looks like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay"><code class="json language-json">{
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">serviceProvider</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">SP1</span><span class="delimiter">&quot;</span></span>,               <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">jobId</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">123</span><span class="delimiter">&quot;</span></span>,                         <i class="conum" data-value="2"></i><b>(2)</b>
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">event</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">FAILURE</span><span class="delimiter">&quot;</span></span>,                     <i class="conum" data-value="3"></i><b>(3)</b>
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">reason</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">Can't connect to database</span><span class="delimiter">&quot;</span></span>,  <i class="conum" data-value="4"></i><b>(4)</b>
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">time</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">2015-12-01T09:40:00</span><span class="delimiter">&quot;</span></span>           <i class="conum" data-value="5"></i><b>(5)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The name of service provider that is responding.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This is the associated job id.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Event should be <code>"FAILURE"</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The reason for this failure (usually an <code>Exception</code>).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>State can be <code>"DONE"</code>, <code>"RUNNING"</code>, <code>"CANCELLED"</code>, or <code>"FAILED"</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Specific error message if any.</td>
+<td>The time when this event occured.</td>
 </tr>
 </table>
 </div>
@@ -169,19 +212,9 @@ executing these tasks which are configured through the OMS.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay"><code class="json language-json">{
-  <span class="key"><span class="delimiter">&quot;</span><span class="content">serviceProvider</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">SP1</span><span class="delimiter">&quot;</span></span>       <i class="conum" data-value="1"></i><b>(1)</b>
-  <span class="key"><span class="delimiter">&quot;</span><span class="content">time</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">2015-01-10T10:12:11</span><span class="delimiter">&quot;</span></span>  <i class="conum" data-value="2"></i><b>(2)</b>
-  <span class="key"><span class="delimiter">&quot;</span><span class="content">status</span><span class="delimiter">&quot;</span></span>: <span class="integer">200</span>,                 <i class="conum" data-value="3"></i><b>(3)</b>
-  <span class="key"><span class="delimiter">&quot;</span><span class="content">tasks</span><span class="delimiter">&quot;</span></span>: [                     <i class="conum" data-value="4"></i><b>(4)</b>
-     {
-       <span class="key"><span class="delimiter">&quot;</span><span class="content">id</span><span class="delimiter">&quot;</span></span>: <span class="integer">123</span>,
-       <span class="key"><span class="delimiter">&quot;</span><span class="content">state</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">RUNNING</span><span class="delimiter">&quot;</span></span>
-     },
-     {
-       <span class="key"><span class="delimiter">&quot;</span><span class="content">id</span><span class="delimiter">&quot;</span></span>: <span class="integer">124</span>,
-       <span class="key"><span class="delimiter">&quot;</span><span class="content">state</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">RUNNING</span><span class="delimiter">&quot;</span></span>
-     }
-  ]
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">serviceProvider</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">SP1</span><span class="delimiter">&quot;</span></span>,       <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">event</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">HEARTBEAT</span><span class="delimiter">&quot;</span></span>,           <i class="conum" data-value="2"></i><b>(2)</b>
+  <span class="key"><span class="delimiter">&quot;</span><span class="content">time</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">2015-01-10T10:12:11</span><span class="delimiter">&quot;</span></span>   <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
 </div>
 </div>
@@ -189,34 +222,17 @@ executing these tasks which are configured through the OMS.</p>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The name of service provider that is responding.</td>
+<td>The name of service provider that is sending heartbeat.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The timestamp when this heartbeat was sent.</td>
+<td>Event should be <code>"HEARTBEAT"</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>The status of SP when this heartbeat was sent.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>List of running or pending tasks in SP if any.</td>
+<td>The time when this heartbeat was sent.</td>
 </tr>
 </table>
-</div>
-<div class="paragraph">
-<p>The responding message should include <code>JMSType</code> header. The valid values for <code>JMSType</code> header are:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><code>heartbeat</code> for the response of heartbeat message.</p>
-</li>
-<li>
-<p><code>task</code> for the response of task message.</p>
-</li>
-</ol>
 </div>
 <div class="paragraph">
 <p>OMS uses ActiveMQ to communicate with another components.  It uses the following queues:</p>
@@ -229,7 +245,10 @@ the following name <code>{SPNAME}.COMMAND</code>.  For example, OMS will send co
 using queue <code>SP1.COMMAND</code>.</p>
 </li>
 <li>
-<p>OMS listens on <code>OMS.REPLY</code> queue for receiving answers and heartbeat from service providers.</p>
+<p>OMS listens on <code>OMS.STATUS</code> queue for receiving answers from service providers.</p>
+</li>
+<li>
+<p>OMS listens on <code>OMS.HEARTBEAT</code> queue for receving heartbeat from service providers.</p>
 </li>
 </ol>
 </div>
@@ -244,9 +263,8 @@ using queue <code>SP1.COMMAND</code>.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay"><code class="json language-json">{
-   <span class="key"><span class="delimiter">&quot;</span><span class="content">taskId</span><span class="delimiter">&quot;</span></span>:  <span class="string"><span class="delimiter">&quot;</span><span class="content">task-command-name</span><span class="delimiter">&quot;</span></span>,             <i class="conum" data-value="1"></i><b>(1)</b>
-   <span class="key"><span class="delimiter">&quot;</span><span class="content">type</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">trim-data</span><span class="delimiter">&quot;</span></span>,                        <i class="conum" data-value="2"></i><b>(2)</b>
-   <span class="key"><span class="delimiter">&quot;</span><span class="content">payload</span><span class="delimiter">&quot;</span></span>: {                                <i class="conum" data-value="3"></i><b>(3)</b>
+   <span class="key"><span class="delimiter">&quot;</span><span class="content">type</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">trim-data</span><span class="delimiter">&quot;</span></span>,                        <i class="conum" data-value="1"></i><b>(1)</b>
+   <span class="key"><span class="delimiter">&quot;</span><span class="content">payload</span><span class="delimiter">&quot;</span></span>: {                                <i class="conum" data-value="2"></i><b>(2)</b>
       <span class="key"><span class="delimiter">&quot;</span><span class="content">tenant</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">tenant1</span><span class="delimiter">&quot;</span></span>,
       <span class="key"><span class="delimiter">&quot;</span><span class="content">date</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">2015-12-31</span><span class="delimiter">&quot;</span></span>,
       <span class="key"><span class="delimiter">&quot;</span><span class="content">startingDate</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">2015-12-30</span><span class="delimiter">&quot;</span></span>,
@@ -259,17 +277,17 @@ using queue <code>SP1.COMMAND</code>.</p>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Task id is generated by OMS.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>This is the service to perform for this command.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>This is the payload (parameters) for that service.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>The <code>correlation-id</code> header contains specific identifier for this command.  When using STOMP to reply this
+command, you can include the value of existing <code>correlation-id</code> as header in SENT command.</p>
 </div>
 <div class="paragraph">
 <p>The supported types of service are:</p>
@@ -498,8 +516,7 @@ The input for this service must be a Tapirus data source.</p>
    <span class="key"><span class="delimiter">&quot;</span><span class="content">input</span><span class="delimiter">&quot;</span></span>: {                        <i class="conum" data-value="2"></i><b>(2)</b>
       <span class="key"><span class="delimiter">&quot;</span><span class="content">type</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">tapirus</span><span class="delimiter">&quot;</span></span>,
       <span class="key"><span class="delimiter">&quot;</span><span class="content">host</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">192.168.0.100</span><span class="delimiter">&quot;</span></span>,
-      <span class="key"><span class="delimiter">&quot;</span><span class="content">port</span><span class="delimiter">&quot;</span></span>: <span class="integer">1999</span>,
-      <span class="key"><span class="delimiter">&quot;</span><span class="content">type</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">tapirus</span><span class="delimiter">&quot;</span></span>
+      <span class="key"><span class="delimiter">&quot;</span><span class="content">port</span><span class="delimiter">&quot;</span></span>: <span class="integer">1999</span>
    }
 }</code></pre>
 </div>
@@ -753,7 +770,7 @@ application.</p>
 <div id="footer">
 <div id="footer-text">
 Version 0.1<br>
-Last updated 2015-09-02 17:21:44 +08:00
+Last updated 2015-10-21 14:10:42 +08:00
 </div>
 </div>
 </body>
