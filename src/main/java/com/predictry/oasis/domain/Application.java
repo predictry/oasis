@@ -14,6 +14,8 @@ import javax.persistence.OrderColumn;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.joda.time.LocalDateTime;
+import org.springframework.util.Assert;
 
 /**
  * This class represents the configured task that will be executed 
@@ -110,6 +112,16 @@ public class Application {
 		if ((index >= 0) && (index < tasks.size())) {
 			tasks.remove(index);
 		}
+	}
+	
+	public String getQueueName() {
+		Assert.notNull(serviceProvider);
+		return String.format("%s.COMMAND", getServiceProvider().getName().toUpperCase());
+	}
+	
+	public String generateJobId(Task task) {
+		int indexNo = tasks.indexOf(task);
+		return String.format("%s_%s_%s", getName(), String.valueOf(indexNo), LocalDateTime.now().toString("YYYY-MM-dd_HH:mm"));
 	}
 	
 }

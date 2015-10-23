@@ -572,42 +572,31 @@ The input for this service must be a Tapirus data source.</p>
 <h2 id="_configuration">4. Configuration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A single tenant can have one or more configurations.  Every configuration acts as an <strong>app</strong>.  A sample configuration
-looks like:</p>
+<p>Every single application can be scheduled and has its own configuration.  TO create new app, open <strong>Application</strong> menu
+and click on <strong>Add</strong>.  Add detail for the application such as name, tenant, service provider, and its own cron schedule.</p>
+</div>
+<div class="paragraph">
+<p>To configure an app, click on the name of the app and click on <strong>Task Detail</strong>.  A single application can have multiple
+tasks that will be executed in sequentially when it is running.  Every single tasks is configured by using Json payload
+that looks like:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay"><code class="json language-json">{
-   <span class="key"><span class="delimiter">&quot;</span><span class="content">name</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">Normal_Execution</span><span class="delimiter">&quot;</span></span>,                               <i class="conum" data-value="1"></i><b>(1)</b>
-   <span class="key"><span class="delimiter">&quot;</span><span class="content">cron</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">0 15 10 * * ? *</span><span class="delimiter">&quot;</span></span>,                                <i class="conum" data-value="2"></i><b>(2)</b>
-   <span class="key"><span class="delimiter">&quot;</span><span class="content">serviceProvider</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">sp1</span><span class="delimiter">&quot;</span></span>,                                 <i class="conum" data-value="3"></i><b>(3)</b>
-   <span class="key"><span class="delimiter">&quot;</span><span class="content">tasks</span><span class="delimiter">&quot;</span></span>: [                                                <i class="conum" data-value="4"></i><b>(4)</b>
-      {                                                      <i class="conum" data-value="5"></i><b>(5)</b>
-        <span class="key"><span class="delimiter">&quot;</span><span class="content">timeout</span><span class="delimiter">&quot;</span></span>: <span class="integer">30000</span>,                                    <i class="conum" data-value="6"></i><b>(6)</b>
-        <span class="key"><span class="delimiter">&quot;</span><span class="content">type</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">trim-data</span><span class="delimiter">&quot;</span></span>,
-        <span class="key"><span class="delimiter">&quot;</span><span class="content">date</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">${NOW}</span><span class="delimiter">&quot;</span></span>,                                    <i class="conum" data-value="7"></i><b>(7)</b>
-        <span class="key"><span class="delimiter">&quot;</span><span class="content">startingDate</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">${NOW}</span><span class="delimiter">&quot;</span></span>,
-        <span class="key"><span class="delimiter">&quot;</span><span class="content">period</span><span class="delimiter">&quot;</span></span>: <span class="integer">10</span>
+   <span class="key"><span class="delimiter">&quot;</span><span class="content">type</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">compute-recommendation</span><span class="delimiter">&quot;</span></span>,
+   <span class="key"><span class="delimiter">&quot;</span><span class="content">timeout</span><span class="delimiter">&quot;</span></span>: <span class="integer">700000</span>,                             <i class="conum" data-value="1"></i><b>(1)</b>
+   <span class="key"><span class="delimiter">&quot;</span><span class="content">payload</span><span class="delimiter">&quot;</span></span>: {
+      <span class="key"><span class="delimiter">&quot;</span><span class="content">date</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">${CURRENT_DATE}</span><span class="delimiter">&quot;</span></span>,                  <i class="conum" data-value="2"></i><b>(2)</b>
+      <span class="key"><span class="delimiter">&quot;</span><span class="content">algorithm</span><span class="delimiter">&quot;</span></span>: {
+         <span class="key"><span class="delimiter">&quot;</span><span class="content">name</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">duo</span><span class="delimiter">&quot;</span></span>
       },
-      {                                                      <i class="conum" data-value="8"></i><b>(8)</b>
-         <span class="key"><span class="delimiter">&quot;</span><span class="content">timeout</span><span class="delimiter">&quot;</span></span>: <span class="integer">70000</span>,
-         <span class="key"><span class="delimiter">&quot;</span><span class="content">type</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">compute-recommendation</span><span class="delimiter">&quot;</span></span>,
-         <span class="key"><span class="delimiter">&quot;</span><span class="content">date</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">${NOW}</span><span class="delimiter">&quot;</span></span>,
-         <span class="key"><span class="delimiter">&quot;</span><span class="content">algorithm</span><span class="delimiter">&quot;</span></span>: {
-            <span class="key"><span class="delimiter">&quot;</span><span class="content">name</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">algo-1</span><span class="delimiter">&quot;</span></span>,
-            <span class="key"><span class="delimiter">&quot;</span><span class="content">params</span><span class="delimiter">&quot;</span></span>: {
-               <span class="key"><span class="delimiter">&quot;</span><span class="content">param1</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">value1</span><span class="delimiter">&quot;</span></span>,
-               <span class="key"><span class="delimiter">&quot;</span><span class="content">param2</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">value2</span><span class="delimiter">&quot;</span></span>
-            }
-         },
-         <span class="key"><span class="delimiter">&quot;</span><span class="content">output</span><span class="delimiter">&quot;</span></span>: {
-            <span class="key"><span class="delimiter">&quot;</span><span class="content">type</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">s3</span><span class="delimiter">&quot;</span></span>,
-            <span class="key"><span class="delimiter">&quot;</span><span class="content">bucket</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">exercises</span><span class="delimiter">&quot;</span></span>,
-            <span class="key"><span class="delimiter">&quot;</span><span class="content">prefix</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">photos/2006/January/sample.jpg</span><span class="delimiter">&quot;</span></span>,
-            <span class="key"><span class="delimiter">&quot;</span><span class="content">region</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">eu-west-1</span><span class="delimiter">&quot;</span></span>
-         }
+      <span class="key"><span class="delimiter">&quot;</span><span class="content">output</span><span class="delimiter">&quot;</span></span>: {
+        <span class="key"><span class="delimiter">&quot;</span><span class="content">type</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">s3</span><span class="delimiter">&quot;</span></span>,
+        <span class="key"><span class="delimiter">&quot;</span><span class="content">bucket</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">exercises</span><span class="delimiter">&quot;</span></span>,
+        <span class="key"><span class="delimiter">&quot;</span><span class="content">prefix</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">test</span><span class="delimiter">&quot;</span></span>,
+        <span class="key"><span class="delimiter">&quot;</span><span class="content">region</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">eu-west-1</span><span class="delimiter">&quot;</span></span>
       }
-   ]
+   }
 }</code></pre>
 </div>
 </div>
@@ -615,64 +604,14 @@ looks like:</p>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The name for this configuration.</td>
+<td>This is a timeout period in seconds.  If no reply is received from service provider after exceeded this timeout
+periods, this task will be skipped and the next task of this app will be executed (if any).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The cron schedule for this configuration.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>The service provider that will be used.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>List of tasks to be executed.  These tasks will be executed in orders.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>The first task.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Payload for the first task.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Configuration also accepts expression.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>The second task.</td>
+<td>Expression such as <code>${CURRENT_DATE}</code> will be evaluated on task execution.</td>
 </tr>
 </table>
-</div>
-<div class="paragraph">
-<p>Because tenant can have different configurations, a separate configuration can be created for task that runs in
-different cron schedule.  For example, <code>import-record</code> can be scheduled to run hourly:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay"><code class="json language-json">{
-   <span class="key"><span class="delimiter">&quot;</span><span class="content">name</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">Import_Data</span><span class="delimiter">&quot;</span></span>,                                    <i class="conum" data-value="1"></i><b>(1)</b>
-   <span class="key"><span class="delimiter">&quot;</span><span class="content">cron</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">0 0/60 * * * ?</span><span class="delimiter">&quot;</span></span>                                  <i class="conum" data-value="2"></i><b>(2)</b>
-   <span class="key"><span class="delimiter">&quot;</span><span class="content">tasks</span><span class="delimiter">&quot;</span></span>: [                                                <i class="conum" data-value="3"></i><b>(3)</b>
-      {                                                      <i class="conum" data-value="7"></i><b>(7)</b>
-         <span class="key"><span class="delimiter">&quot;</span><span class="content">timeout</span><span class="delimiter">&quot;</span></span>: <span class="integer">50000</span>,
-         <span class="key"><span class="delimiter">&quot;</span><span class="content">task</span><span class="delimiter">&quot;</span></span>: {
-           <span class="key"><span class="delimiter">&quot;</span><span class="content">type</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">import-record</span><span class="delimiter">&quot;</span></span>,
-           <span class="key"><span class="delimiter">&quot;</span><span class="content">date</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">${NOW}</span><span class="delimiter">&quot;</span></span>,
-           <span class="key"><span class="delimiter">&quot;</span><span class="content">hour</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">${HOUR}</span><span class="delimiter">&quot;</span></span>,
-           <span class="key"><span class="delimiter">&quot;</span><span class="content">input</span><span class="delimiter">&quot;</span></span>: {
-               <span class="key"><span class="delimiter">&quot;</span><span class="content">host</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">192.168.0.100</span><span class="delimiter">&quot;</span></span>,
-               <span class="key"><span class="delimiter">&quot;</span><span class="content">port</span><span class="delimiter">&quot;</span></span>: <span class="integer">1999</span>,
-               <span class="key"><span class="delimiter">&quot;</span><span class="content">type</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">tapirus</span><span class="delimiter">&quot;</span></span>
-           }
-         }
-      }
-   ]
-}</code></pre>
-</div>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -687,7 +626,17 @@ OMS will add <code>tenant</code> automatically to the payload so it is not neces
 </table>
 </div>
 <div class="paragraph">
-<p>OMS will substitute expression such as <code>${NOW}</code> into current date in <code>YYYY-MM-DD</code> format and <code>${HOUR}</code> into current hour number.</p>
+<p>You embed JavaScript expression inside a string value by using <code>${...}</code>.  The following is list of available global variables:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>CURRENT_DATE</code>:  The date when this expression is evaluated such as <code>"2015-10-11"</code>.</p>
+</li>
+<li>
+<p><code>CURRENT_HOUR</code>:  The hour when this expression is evaluated such as <code>"23"</code>.</p>
+</li>
+</ol>
 </div>
 </div>
 </div>
@@ -770,7 +719,7 @@ application.</p>
 <div id="footer">
 <div id="footer-text">
 Version 0.1<br>
-Last updated 2015-10-21 14:10:42 +08:00
+Last updated 2015-10-22 16:05:05 +08:00
 </div>
 </div>
 </body>

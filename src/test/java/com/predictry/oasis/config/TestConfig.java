@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
+import javax.script.ScriptEngineManager;
 import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
@@ -60,6 +61,9 @@ public class TestConfig {
 		return transactionManager;
 	}
 	
-	
+	@Bean
+	public ScriptEngineManager scriptEngineManager() {
+		return new ScriptEngineManager();
+	}
 	
 }

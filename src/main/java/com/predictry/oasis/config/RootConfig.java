@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
+import javax.script.ScriptEngineManager;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,6 +98,11 @@ public class RootConfig {
         factory.setConnectTimeout(TIMEOUT);
         RestTemplate restTemplate = new RestTemplate(factory);
         return restTemplate;
+	}
+	
+	@Bean
+	public ScriptEngineManager scriptEngineManager() {
+		return new ScriptEngineManager();
 	}
 	
 	/**

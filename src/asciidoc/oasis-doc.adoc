@@ -304,82 +304,42 @@ The payload required for this service is something like:
 
 == Configuration
 
-A single tenant can have one or more configurations.  Every configuration acts as an *app*.  A sample configuration 
-looks like:
+Every single application can be scheduled and has its own configuration.  TO create new app, open *Application* menu
+and click on *Add*.  Add detail for the application such as name, tenant, service provider, and its own cron schedule.
+
+To configure an app, click on the name of the app and click on *Task Detail*.  A single application can have multiple
+tasks that will be executed in sequentially when it is running.  Every single tasks is configured by using Json payload
+that looks like:
 
 [source,json]
 ----
 {
-   "name": "Normal_Execution",                               // <1>
-   "cron": "0 15 10 * * ? *",                                // <2>
-   "serviceProvider": "sp1",                                 // <3>
-   "tasks": [                                                // <4>
-      {                                                      // <5>
-        "timeout": 30000,                                    // <6>
-        "type": "trim-data",
-        "date": "${NOW}",                                    // <7>
-        "startingDate": "${NOW}",
-        "period": 10
+   "type": "compute-recommendation",
+   "timeout": 700000,                             // <1>
+   "payload": {
+      "date": "${CURRENT_DATE}",                  // <2>
+      "algorithm": {
+         "name": "duo"
       },
-      {                                                      // <8>
-         "timeout": 70000,
-         "type": "compute-recommendation",
-         "date": "${NOW}",
-         "algorithm": {
-            "name": "algo-1",
-            "params": {
-               "param1": "value1",
-               "param2": "value2"
-            }
-         },
-         "output": {
-            "type": "s3",
-            "bucket": "exercises",
-            "prefix": "photos/2006/January/sample.jpg",
-            "region": "eu-west-1"
-         }
+      "output": {
+        "type": "s3",
+        "bucket": "exercises",
+        "prefix": "test",
+        "region": "eu-west-1"
       }
-   ]
-}
----- 
-<1> The name for this configuration.
-<2> The cron schedule for this configuration.
-<3> The service provider that will be used.
-<4> List of tasks to be executed.  These tasks will be executed in orders.
-<5> The first task.
-<6> Payload for the first task.
-<7> Configuration also accepts expression.
-<8> The second task.
-
-Because tenant can have different configurations, a separate configuration can be created for task that runs in 
-different cron schedule.  For example, `import-record` can be scheduled to run hourly:
-
-[source,json]
-----
-{
-   "name": "Import_Data",                                    // <1>
-   "cron": "0 0/60 * * * ?"                                  // <2>
-   "tasks": [                                                // <3>
-      {                                                      // <7>
-         "timeout": 50000,
-         "task": {
-           "type": "import-record",
-           "date": "${NOW}",
-           "hour": "${HOUR}",
-           "input": {
-               "host": "192.168.0.100",
-               "port": 1999,
-               "type": "tapirus"
-           }
-         }
-      }
-   ]
+   }
 }
 ----
+<1> This is a timeout period in seconds.  If no reply is received from service provider after exceeded this timeout
+periods, this task will be skipped and the next task of this app will be executed (if any).
+<2> Expression such as `${CURRENT_DATE}` will be evaluated on task execution.
 
 TIP: OMS will add `tenant` automatically to the payload so it is not necessary to be defined in the configuration.
 
-OMS will substitute expression such as `${NOW}` into current date in `YYYY-MM-DD` format and `${HOUR}` into current hour number.
+You embed JavaScript expression inside a string value by using `${...}`.  The following is list of available global variables:
+
+1. `CURRENT_DATE`:  The date when this expression is evaluated such as `"2015-10-11"`.
+2. `CURRENT_HOUR`:  The hour when this expression is evaluated such as `"23"`.
 
 == Alternative Design
 
