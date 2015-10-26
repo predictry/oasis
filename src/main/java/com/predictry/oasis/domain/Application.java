@@ -1,21 +1,31 @@
 package com.predictry.oasis.domain;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.ElementCollection;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
+import javax.script.ScriptEngineManager;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * This class represents the configured task that will be executed 
@@ -27,6 +37,8 @@ import org.springframework.util.Assert;
  */
 @Entity
 public class Application {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(Application.class);
 
 	@Id @GeneratedValue
 	private Long id;
@@ -40,7 +52,8 @@ public class Application {
 	@NotBlank
 	private String cron;
 	
-	@ElementCollection(fetch = FetchType.EAGER) @CollectionTable @OrderColumn
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER) 
+	@OrderColumn @JoinColumn(name = "app_id")
 	private List<Task> tasks = new ArrayList<>();	
 	
 	@NotNull @ManyToOne
@@ -114,14 +127,28 @@ public class Application {
 		}
 	}
 	
+	public List<Job> getJobs(int taskIndex) {
+		List<Job> result = new ArrayList<>();
+		Task task = getTask(taskIndex);
+		if (task != null) {
+			result.addAll(task.getJobs());
+		}
+		return result;
+	}
+	
 	public String getQueueName() {
 		Assert.notNull(serviceProvider);
 		return String.format("%s.COMMAND", getServiceProvider().getName().toUpperCase());
 	}
 	
-	public String generateJobId(Task task) {
-		int indexNo = tasks.indexOf(task);
-		return String.format("%s_%s_%s", getName(), String.valueOf(indexNo), LocalDateTime.now().toString("YYYY-MM-dd_HH:mm"));
+	public Map<String, Object> execute(ObjectMapper objectMapper, ScriptEngineManager scriptEngineManager) throws JsonParseException, JsonMappingException, IOException {
+		if (tasks.isEmpty()) {
+			LOG.warn("No task to execute for application [" + getName() + "]");
+			return null;
+		}
+		Task task = tasks.get(0);
+		String jobId = String.format("%s_%s_%s", getName(), String.valueOf(tasks.indexOf(task)), LocalDateTime.now().toString("YYYY-MM-dd_HH:mm"));
+		return task.execute(objectMapper, scriptEngineManager, jobId, getTenant().getId());
 	}
 	
 }

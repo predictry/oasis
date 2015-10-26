@@ -100,19 +100,8 @@ public class ApplicationService {
 	public void execute(Long id) throws JsonParseException, JsonMappingException, IOException {
 		Application app = appRepository.findOne(id);
 		if (app != null) {
-			Task task = app.getTask(0);
-			//if (app.getServiceProvider().getStatus() == ServiceProviderStatus.RUNNING) {
-				Map<String, Object> payload = task.parsePayload(objectMapper, scriptEngineManager);
-				if (payload.containsKey("payload") && (payload.get("payload") instanceof Map)) {
-					@SuppressWarnings("unchecked")
-					Map<String, Object> nestedPayload = (Map<String, Object>) payload.get("payload");
-					nestedPayload.put("tenant", app.getTenant().getId());
-				}
-				payload.put("jobId", app.generateJobId(task));
-				jmsTemplate.send(app.getQueueName(), new JsonMessageCreator(objectMapper, payload));
-			//} else {
-			//	LOG.warn("Can't run application [" + id + "] because service provider [" + app.getServiceProvider() + "] is not running.");
-			//}
+			Map<String, Object> payload = app.execute(objectMapper, scriptEngineManager);
+			jmsTemplate.send(app.getQueueName(), new JsonMessageCreator(objectMapper, payload));
 		} else {
 			LOG.warn("Can't find application instance for id [" + id + "]");
 		}

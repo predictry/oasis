@@ -56,7 +56,9 @@ public class ApplicationServiceTest extends TestCase {
 		app.setName("test application");
 		app.setCron("0 11 11 11 11 ?");
 		app.setServiceProvider(sp);
-		app.addTask(new Task());
+		Task task = new Task();
+		task.setPayload("{\"test\": true}");
+		app.addTask(task);
 		applicationService.add(app);
 	}
 
@@ -85,7 +87,9 @@ public class ApplicationServiceTest extends TestCase {
 	
 	@Test
 	public void testUpdate() throws SchedulerException {
-		app.addTask(new Task());
+		Task task = new Task();
+		task.setPayload("{\"test\": true}");
+		app.addTask(task);
 		applicationService.add(app);
 		
 		// Check if new task is added

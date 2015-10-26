@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+  <head th:replace="fragments :: head">
+  </head>  
+
+  <body>
+  
+    <div th:include="fragments :: header('app')"></div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h3>Jobs For Task</h3>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                    	<th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Last Repeat</th>
+                        <th>Repeat Count</th>
+                        <th>Status</th>
+                        <th>&nbsp;</th>                     
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="job: ${jobs}">
+                        <td>
+                            <span th:text="${job.name}">Job Name</span>
+                        </td>
+                        <td>
+                            <span th:text="${job.startTime?.toString('dd-MM-YYYY hh:mm:ss')}">2015-10-01 10:10:10</span>
+                        </td>
+                        <td>
+                            <span th:text="${job.endTime?.toString('dd-MM-YYYY hh:mm:ss')}">2015-10-02 20:10:10</span>
+                        </td>
+                        <td>
+                            <span th:text="${job.lastRepeat?.toString('dd-MM-YYYY hh:mm:ss')}">2015-10-03 10:05:10</span>
+                        </td>
+                        <td>
+                            <span th:text="${job.numOfRepeat}">0</span>
+                        </td>
+                        <td>
+                            <span th:text="${job.status}">Started</span>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <p>
+          <a class="btn" role="button" id="back" th:href="@{/app/{id}/detail(id=${app.id})}">Back</a>
+        </p>
+        
+    </div>
+    
+    <div th:include="fragments :: scripts"></div>
+    
+  </body>
+
+</html>
