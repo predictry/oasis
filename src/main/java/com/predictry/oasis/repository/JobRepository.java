@@ -13,5 +13,7 @@ import com.predictry.oasis.domain.Job;
  */
 @Repository
 public interface JobRepository extends JpaRepository<Job, Long>  {
+	
+	public Job findByName(String jobId);
 
 }

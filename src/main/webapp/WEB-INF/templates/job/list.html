@@ -20,11 +20,12 @@
                     <tr>
                         <th>Name</th>
                         <th>Application</th>
-                        <th>Task #</th>
+                        <th>T#</th>
                     	<th>Start Time</th>
                         <th>End Time</th>
                         <th>Last Repeat</th>
-                        <th>Repeat Count</th>
+                        <th>Delta</th>
+                        <th>Repeat</th>
                         <th>Status</th>
                         <th>&nbsp;</th>                     
                     </tr>
@@ -48,6 +49,9 @@
                         </td>
                         <td>
                             <span th:text="${job.lastRepeat?.toString('dd-MM-YYYY hh:mm:ss')}">2015-10-03 10:05:10</span>
+                        </td>
+                        <td>
+                            <span th:text="${#numbers.formatDecimal(job.processingTime,0,2)}">10</span>
                         </td>
                         <td>
                             <span th:text="${job.numOfRepeat}">0</span>

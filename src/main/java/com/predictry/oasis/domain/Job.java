@@ -47,6 +47,8 @@ public class Job {
 	
 	private Integer numOfRepeat = 0;
 	
+	private Double processingTime = 0.0;
+	
 	@NotNull
 	private JobStatus status = JobStatus.STARTED;
 	
@@ -130,6 +132,14 @@ public class Job {
 	public void setNumOfRepeat(Integer numOfRepeat) {
 		this.numOfRepeat = numOfRepeat;
 	}
+	
+	public Double getProcessingTime() {
+		return processingTime;
+	}
+
+	public void setProcessingTime(Double processingTime) {
+		this.processingTime = processingTime;
+	}
 
 	public JobStatus getStatus() {
 		return status;
@@ -161,17 +171,6 @@ public class Job {
 
 	public void setPayloadAsMap(Map<String, Object> payloadAsMap) {
 		this.payloadAsMap = payloadAsMap;
-	}
-
-	public void finish(LocalDateTime finishTime) {
-		this.status = JobStatus.FINISH;
-		this.endTime = finishTime;
-	}
-	
-	public void fail(LocalDateTime failTime, String reason) {
-		this.status = JobStatus.FAIL;
-		this.endTime = failTime;
-		this.reason = reason;
 	}
 	
 }

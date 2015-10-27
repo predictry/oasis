@@ -114,20 +114,4 @@ public class ApplicationService {
 		}
 	}
 	
-//	@JmsListener(containerFactory = "queueJmsListenerContainerFactory", destination = "OMS.STATUS")
-//	public void receiveStatus(Map<String, Object> map) throws JMSException {
-//		LOG.info("Receiving status [" + map + "]");
-//		if (!map.containsKey("serviceProvider") || !map.containsKey("jobId")) {
-//			LOG.warn("Encountered invalid message, it will be ignored!");
-//			return;
-//		}
-//		String serviceProvider = (String) map.get("serviceProvider");
-//		List<Application> apps = appRepository.findByServiceProviderName(serviceProvider);
-//		for (Application app: apps) {
-//			for (StatusHandler handler: statusHandlers) {
-//				handler.handle(app, map);
-//			}
-//		}
-//	}
-	
 }
