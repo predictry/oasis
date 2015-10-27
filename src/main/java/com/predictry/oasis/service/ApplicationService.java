@@ -2,7 +2,6 @@ package com.predictry.oasis.service;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import javax.script.ScriptEngineManager;
 import javax.transaction.Transactional;
@@ -21,9 +20,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.predictry.oasis.domain.Application;
+import com.predictry.oasis.domain.Job;
 import com.predictry.oasis.domain.SchedulerOperations;
 import com.predictry.oasis.domain.Task;
 import com.predictry.oasis.repository.ApplicationRepository;
+import com.predictry.oasis.repository.JobRepository;
 import com.predictry.oasis.util.JsonMessageCreator;
 
 /**
@@ -46,6 +47,9 @@ public class ApplicationService {
 	
 	@Autowired
 	private ApplicationRepository appRepository;
+	
+	@Autowired
+	private JobRepository jobRepository;
 	
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -100,11 +104,30 @@ public class ApplicationService {
 	public void execute(Long id) throws JsonParseException, JsonMappingException, IOException {
 		Application app = appRepository.findOne(id);
 		if (app != null) {
-			Map<String, Object> payload = app.execute(objectMapper, scriptEngineManager);
-			jmsTemplate.send(app.getQueueName(), new JsonMessageCreator(objectMapper, payload));
+			Job job = app.execute(objectMapper, scriptEngineManager);
+			if (job != null) {
+				jmsTemplate.send(app.getQueueName(), new JsonMessageCreator(objectMapper, job.getPayloadAsMap()));
+				jobRepository.save(job);
+			}
 		} else {
 			LOG.warn("Can't find application instance for id [" + id + "]");
 		}
 	}
+	
+//	@JmsListener(containerFactory = "queueJmsListenerContainerFactory", destination = "OMS.STATUS")
+//	public void receiveStatus(Map<String, Object> map) throws JMSException {
+//		LOG.info("Receiving status [" + map + "]");
+//		if (!map.containsKey("serviceProvider") || !map.containsKey("jobId")) {
+//			LOG.warn("Encountered invalid message, it will be ignored!");
+//			return;
+//		}
+//		String serviceProvider = (String) map.get("serviceProvider");
+//		List<Application> apps = appRepository.findByServiceProviderName(serviceProvider);
+//		for (Application app: apps) {
+//			for (StatusHandler handler: statusHandlers) {
+//				handler.handle(app, map);
+//			}
+//		}
+//	}
 	
 }

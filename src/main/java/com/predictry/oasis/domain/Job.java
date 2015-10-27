@@ -1,9 +1,13 @@
 package com.predictry.oasis.domain;
 
+import java.util.Map;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
@@ -26,6 +30,12 @@ public class Job {
 	@NotBlank
 	private String name;
 	
+	@NotNull @ManyToOne
+	private Application application;
+	
+	@NotNull
+	private Integer taskIndex = 0;
+	
 	@NotNull @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
 	private LocalDateTime startTime;
 	
@@ -43,8 +53,11 @@ public class Job {
 	@Column(length = 2000)
 	private String reason;
 	
-	@NotBlank
+	@NotBlank @Column(length = 2000)
 	private String payload;
+	
+	@Transient
+	private Map<String, Object> payloadAsMap;
 	
 	public Job() { }
 	
@@ -68,6 +81,22 @@ public class Job {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public Application getApplication() {
+		return application;
+	}
+
+	public void setApplication(Application application) {
+		this.application = application;
+	}
+	
+	public Integer getTaskIndex() {
+		return taskIndex;
+	}
+
+	public void setTaskIndex(Integer taskIndex) {
+		this.taskIndex = taskIndex;
 	}
 
 	public LocalDateTime getStartTime() {
@@ -126,6 +155,14 @@ public class Job {
 		this.payload = payload;
 	}
 	
+	public Map<String, Object> getPayloadAsMap() {
+		return payloadAsMap;
+	}
+
+	public void setPayloadAsMap(Map<String, Object> payloadAsMap) {
+		this.payloadAsMap = payloadAsMap;
+	}
+
 	public void finish(LocalDateTime finishTime) {
 		this.status = JobStatus.FINISH;
 		this.endTime = finishTime;

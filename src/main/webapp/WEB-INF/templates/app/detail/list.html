@@ -35,11 +35,6 @@
                             <span th:text="${task.payload}">Payload</span>
                         </td>
                         <td>
-                            <a th:href="@{/app/{id}/detail/{index}/jobs(id=${app.id}, index=${iterStat.index})}">
-                                <span th:text="${task.getJobs().size()}">12</span>
-                            </a>
-                        </td>
-                        <td>
                             <a class="btn btn-danger btn-sm" role="button" id="delete" 
                                 th:href="@{'/app/' + ${app.id} + '/detail/delete/' + ${iterStat.index}}">Delete</a>
                         </td>

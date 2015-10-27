@@ -3,7 +3,6 @@ package com.predictry.oasis.domain;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -127,28 +126,22 @@ public class Application {
 		}
 	}
 	
-	public List<Job> getJobs(int taskIndex) {
-		List<Job> result = new ArrayList<>();
-		Task task = getTask(taskIndex);
-		if (task != null) {
-			result.addAll(task.getJobs());
-		}
-		return result;
-	}
-	
 	public String getQueueName() {
 		Assert.notNull(serviceProvider);
 		return String.format("%s.COMMAND", getServiceProvider().getName().toUpperCase());
 	}
 	
-	public Map<String, Object> execute(ObjectMapper objectMapper, ScriptEngineManager scriptEngineManager) throws JsonParseException, JsonMappingException, IOException {
+	public Job execute(ObjectMapper objectMapper, ScriptEngineManager scriptEngineManager) throws JsonParseException, JsonMappingException, IOException {
 		if (tasks.isEmpty()) {
 			LOG.warn("No task to execute for application [" + getName() + "]");
 			return null;
 		}
 		Task task = tasks.get(0);
-		String jobId = String.format("%s_%s_%s", getName(), String.valueOf(tasks.indexOf(task)), LocalDateTime.now().toString("YYYY-MM-dd_HH:mm"));
-		return task.execute(objectMapper, scriptEngineManager, jobId, getTenant().getId());
+		String jobId = String.format("%s_%s_%s", getName(), String.valueOf(tasks.indexOf(task)), LocalDateTime.now().toString("YYYY-MM-dd_HH:mm:ss_SSSS"));
+		Job job = task.execute(objectMapper, scriptEngineManager, jobId, getTenant().getId());
+		job.setApplication(this);
+		job.setTaskIndex(0);
+		return job;
 	}
 	
 }

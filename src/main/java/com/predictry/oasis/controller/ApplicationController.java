@@ -108,12 +108,4 @@ public class ApplicationController {
 		return "app/detail/list";
 	}
 	
-	@RequestMapping(value = "/{id}/detail/{index}/jobs")
-	public String jobs(Model model, @PathVariable("id") Application app, @PathVariable("index") Integer taskIndex) {
-		model.addAttribute("app", app);
-		model.addAttribute("index", taskIndex);
-		model.addAttribute("jobs", app.getJobs(taskIndex));
-		return "app/detail/jobs/list";
-	}
-	
 }

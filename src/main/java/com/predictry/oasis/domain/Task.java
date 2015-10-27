@@ -1,22 +1,14 @@
 package com.predictry.oasis.domain;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
@@ -47,10 +39,6 @@ public class Task {
 	
 	@NotBlank @Column(length = 2000)
 	private String payload;
-	
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-	@OrderColumn @JoinColumn(name = "task_id")
-	private List<Job> jobs = new ArrayList<>();
 
 	public String getPayload() {
 		return payload;
@@ -60,40 +48,7 @@ public class Task {
 		this.payload = payload;
 	}
 	
-	public List<Job> getJobs() {
-		return jobs;
-	}
-	
-	public List<Job> getJobs(JobStatus status) {
-		return jobs.stream().filter(job -> job.getStatus() == status).collect(Collectors.toList());
-	}
-	
-	public Job getJob(String jobId) {
-		return getJobs().stream().filter(job -> job.getName().equals(jobId)).findFirst().orElse(null);
-	}
-	
-	public Job getJob(String jobId, JobStatus status) {
-		return getJobs().stream().filter(job -> job.getName().equals(jobId) && job.getStatus() == status)
-				.findFirst().orElse(null);
-	}
-	
-	public Job jobFinish(String jobId, LocalDateTime finishTime) {
-		Job job = getJob(jobId);
-		if (job != null) {
-			job.finish(finishTime);
-		}
-		return job;
-	}
-	
-	public Job jobFailed(String jobId, LocalDateTime failTime, String reason) {
-		Job job = getJob(jobId);
-		if (job != null) {
-			job.fail(failTime, reason);
-		}
-		return job;
-	}
-	
-	public Map<String, Object> execute(ObjectMapper objectMapper, ScriptEngineManager scriptEngineManager, String jobId, String tenantId) throws JsonParseException, JsonMappingException, IOException {
+	public Job execute(ObjectMapper objectMapper, ScriptEngineManager scriptEngineManager, String jobId, String tenantId) throws JsonParseException, JsonMappingException, IOException {
 		// Replace expression in payload with real value
 		StringBuffer jobPayload = new StringBuffer();
 		ScriptEngine engine = scriptEngineManager.getEngineByName("nashorn");
@@ -125,12 +80,10 @@ public class Task {
 		}
 		payloadAsMap.put("jobId", jobId);
 		
-		// Creating new job
+		// Create and return new job
 		Job job = new Job(jobId, LocalDateTime.now(), jobPayload.toString());
-		jobs.add(job);
-		
-		// Return result
-		return payloadAsMap; 
+		job.setPayloadAsMap(payloadAsMap);
+		return job; 
 	}
 	
 }

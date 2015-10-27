@@ -7,11 +7,11 @@
 
   <body>
   
-    <div th:include="fragments :: header('app')"></div>
+    <div th:include="fragments :: header('job')"></div>
     
     <div class="container">
         <div class="page-header">
-            <h3>Jobs For Task</h3>
+            <h3>Job</h3>
         </div>
         
         <div class="table-responsive">
@@ -19,6 +19,8 @@
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Application</th>
+                        <th>Task #</th>
                     	<th>Start Time</th>
                         <th>End Time</th>
                         <th>Last Repeat</th>
@@ -31,6 +33,12 @@
                     <tr th:each="job: ${jobs}">
                         <td>
                             <span th:text="${job.name}">Job Name</span>
+                        </td>
+                        <td>
+                            <span th:text="${job.application.name}">Application Name</span>
+                        </td>
+                        <td>
+                            <span th:text="${job.taskIndex}">0</span>
                         </td>
                         <td>
                             <span th:text="${job.startTime?.toString('dd-MM-YYYY hh:mm:ss')}">2015-10-01 10:10:10</span>
@@ -53,10 +61,6 @@
                 </tbody>
             </table>
         </div>
-        
-        <p>
-          <a class="btn" role="button" id="back" th:href="@{/app/{id}/detail(id=${app.id})}">Back</a>
-        </p>
         
     </div>
     
