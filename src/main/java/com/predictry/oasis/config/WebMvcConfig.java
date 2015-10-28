@@ -14,6 +14,8 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 import org.thymeleaf.templateresolver.TemplateResolver;
 
+import com.predictry.oasis.util.ViewHelper;
+
 /**
  * Spring WebMVC configuration.
  * 
@@ -60,6 +62,11 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 		viewResolver.setTemplateEngine(templateEngine());
 		viewResolver.setOrder(1);
 		return viewResolver;
+	}
+	
+	@Bean
+	public ViewHelper viewHelper() {
+		return new ViewHelper();
 	}
 	
 	@Override

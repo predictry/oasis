@@ -1,6 +1,8 @@
 package com.predictry.oasis.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,8 +26,10 @@ public class JobController {
 	private JobRepository jobRepository;
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String list(Model model) {
-		model.addAttribute("jobs", jobRepository.findAll());
+	public String list(Model model, Pageable pageable) {
+		Page<Job> page = jobRepository.findAll(pageable);
+		model.addAttribute("jobs", page.getContent());
+		model.addAttribute("page", page);
 		return "job/list";
 	}
 	

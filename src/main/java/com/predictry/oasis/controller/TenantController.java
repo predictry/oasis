@@ -2,6 +2,8 @@ package com.predictry.oasis.controller;
 
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,8 +28,10 @@ public class TenantController {
 	private TenantRepository tenantRepository;
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String list(Model model) throws SchedulerException {
-		model.addAttribute("tenants", tenantRepository.findAll());
+	public String list(Model model, Pageable pageable) throws SchedulerException {
+		Page<Tenant> page = tenantRepository.findAll(pageable);
+		model.addAttribute("tenants", page.getContent());
+		model.addAttribute("page", page);
 		return "tenant/list";
 	}
 	
