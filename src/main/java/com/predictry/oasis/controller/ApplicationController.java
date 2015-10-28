@@ -1,5 +1,10 @@
 package com.predictry.oasis.controller;
 
+import java.io.IOException;
+import java.util.Map;
+
+import javax.script.ScriptEngineManager;
+
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,6 +14,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.predictry.oasis.domain.Application;
 import com.predictry.oasis.domain.Task;
 import com.predictry.oasis.repository.ServiceProviderRepository;
@@ -33,6 +41,12 @@ public class ApplicationController {
 	
 	@Autowired
 	private TenantRepository tenantRepository;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
+	
+	@Autowired
+	private ScriptEngineManager scriptEngineManager;
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String list(Model model) throws SchedulerException {
@@ -90,13 +104,19 @@ public class ApplicationController {
 	}
 	
 	@RequestMapping(value = "/{id}/detail/save")
-	public String detailSave(@ModelAttribute Task task, @PathVariable("id") Application app) {
+	public String detailSave(@ModelAttribute Task task, @PathVariable("id") Application app, Model model) throws JsonParseException, JsonMappingException, IOException {
+		// Validate Json
+		objectMapper.readValue(task.evaluatePayload(scriptEngineManager), Map.class);
+		
 		applicationService.addTask(app, task);
 		return "redirect:/app/" + app.getId() + "/detail";
 	}
 	
 	@RequestMapping(value = "/{id}/detail/save/{index}")
-	public String detailSave(@ModelAttribute Task task, @PathVariable("id") Application app, @PathVariable("index") Integer index) {
+	public String detailSave(@ModelAttribute Task task, @PathVariable("id") Application app, @PathVariable("index") Integer index) throws JsonParseException, JsonMappingException, IOException {
+		// Validate Json
+		objectMapper.readValue(task.evaluatePayload(scriptEngineManager), Map.class);
+		
 		app = applicationService.editTask(app, task, index);
 		return "redirect:/app/" + app.getId() + "/detail";
 	}

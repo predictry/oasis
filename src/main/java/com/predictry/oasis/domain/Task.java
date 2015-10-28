@@ -48,13 +48,12 @@ public class Task {
 		this.payload = payload;
 	}
 	
-	public Job execute(ObjectMapper objectMapper, ScriptEngineManager scriptEngineManager, String jobId, String tenantId) throws JsonParseException, JsonMappingException, IOException {
-		// Replace expression in payload with real value
-		StringBuffer jobPayload = new StringBuffer();
+	public String evaluatePayload(ScriptEngineManager scriptEngineManager) {
+		StringBuffer result = new StringBuffer();
 		ScriptEngine engine = scriptEngineManager.getEngineByName("nashorn");
 		if (engine == null) {
 			LOG.warn("Can't find 'nashorn' script engine.");
-			jobPayload.append(getPayload());
+			result.append(getPayload());
 		} else {
 			engine.put("CURRENT_DATE", LocalDateTime.now().toString("YYYY-MM-dd"));
 			engine.put("CURRENT_HOUR", LocalDateTime.now().toString("HH"));
@@ -62,17 +61,21 @@ public class Task {
 			while (m.find()) {
 				String exp = m.group(1);
 				try {
-					m.appendReplacement(jobPayload, String.valueOf(engine.eval(exp)));
+					m.appendReplacement(result, String.valueOf(engine.eval(exp)));
 				} catch (Exception e) {
 					LOG.error("Exception while evaluating [" + exp + "]", e);
 				}
 			}
-			m.appendTail(jobPayload);
+			m.appendTail(result);
 		}
-		
+		return result.toString();
+	}
+	
+	public Job execute(ObjectMapper objectMapper, ScriptEngineManager scriptEngineManager, String jobId, String tenantId) throws JsonParseException, JsonMappingException, IOException {
+		String evaluatedPayload = evaluatePayload(scriptEngineManager);
 		// Parsed the payload into Map
 		@SuppressWarnings("unchecked")
-		Map<String, Object> payloadAsMap = objectMapper.readValue(jobPayload.toString(), Map.class);
+		Map<String, Object> payloadAsMap = objectMapper.readValue(evaluatedPayload, Map.class);
 		if (payloadAsMap.containsKey("payload") && (payloadAsMap.get("payload") instanceof Map)) {
 			@SuppressWarnings("unchecked")
 			Map<String, Object> nestedPayload = (Map<String, Object>) payloadAsMap.get("payload");
@@ -81,7 +84,7 @@ public class Task {
 		payloadAsMap.put("jobId", jobId);
 		
 		// Create and return new job
-		Job job = new Job(jobId, LocalDateTime.now(), jobPayload.toString());
+		Job job = new Job(jobId, LocalDateTime.now(), evaluatedPayload);
 		job.setPayloadAsMap(payloadAsMap);
 		return job; 
 	}
