@@ -9,3 +9,8 @@ body {
 input:invalid {
 	border: 1px solid red;
 }
+
+td a:hover {
+	cursor: pointer;
+	text-decoration: none;
+}

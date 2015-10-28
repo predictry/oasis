@@ -4,8 +4,10 @@
       
   <head th:fragment="head">
     <title>OMS Dashboard (Untouched By Front-end Yet!)</title>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
     <link th:href="@{/resources/css/main.css}" rel="stylesheet" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
   </head>
 
   <body>
@@ -32,11 +34,6 @@
                 </div>
             </div>
         </nav>
-    </div>
-    
-    <div th:fragment="scripts">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
     </div>
     
     <div th:fragment="pagination (page)" th:object="${page}" th:if="${page.totalElements > 0}">

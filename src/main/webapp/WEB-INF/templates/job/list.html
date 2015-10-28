@@ -33,7 +33,9 @@
                 <tbody>
                     <tr th:each="job: ${jobs}">
                         <td>
-                            <span th:text="${job.name}">Job Name</span>
+                            <a data-toggle="modal" data-target="#reasonDialog" th:attr="data-id=${job.id}">
+                                <span th:text="${job.name}">Job Name</span>
+                            </a>
                         </td>
                         <td>
                             <span th:text="${job.application.name}">Application Name</span>
@@ -66,9 +68,37 @@
             </table>
         </div>
         
+   </div>
+    
+   <div class="modal fade" id="reasonDialog" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document" style="z-index: 2000;">
+            <div class="modal-content" >
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Detail</h4>
+                </div>
+                <div class="modal-body">
+                   <div id="reasonDialogContent"></div>
+                </div>
+            </div>
+        </div>
     </div>
     
-    <div th:include="fragments :: scripts"></div>
+        
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    $('#reasonDialog').on('show.bs.modal', function(event) {
+       var id = $(event.relatedTarget).data('id');
+       var modal = $(this);
+       var path = /*[[@{/job}]]*/ '/job';
+       $.get(path + '/' + id + '/popup', function(data) {
+          $('#reasonDialogContent').html(data); 
+       });
+    });
+    /*]]>*/
+    </script>
     
   </body>
 

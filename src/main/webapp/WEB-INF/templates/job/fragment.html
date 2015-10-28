@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+  <body>
+  
+    <div th:fragment="detail_popup">
+        <div th:text="${job.name}"></div>
+        <h4>Payload</h4>
+        <pre th:text="${job.payload}"></pre>
+        <div th:if="${job.reason} != null">
+	        <h4>Reason</h4>
+	        <pre th:text="${job.reason}"></pre>
+        </div>
+    </div>
+  
+  </body>
+
+</html>
