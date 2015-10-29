@@ -14,6 +14,10 @@
             <h3>Job</h3>
         </div>
         
+       <div style="text-align: right;">
+            <a class="btn" role="button" id="btn-clear-logs" th:href="@{/job/clear}"><span class="glyphicon glyphicon-trash"></span> Clear Logs</a>
+       </div>
+        
         <div class="table-responsive">
             <table class="table table-hover">
                 <thead>
@@ -86,10 +90,9 @@
             </table>
         </div>
         
-        <div th:include="fragments :: pagination (${page})"></div>
-        
+       <div th:include="fragments :: pagination (${page})"></div>
    </div>
-    
+   
    <div class="modal fade" id="reasonDialog" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document" style="z-index: 2000;">
             <div class="modal-content" >
@@ -117,6 +120,10 @@
           $('#reasonDialogContent').html(data); 
        });
     });
+    
+    $('#btn-clear-logs').click(function() {
+        return confirm('Are you sure you want to delete all logs?');
+    }) 
     /*]]>*/
     </script>
     

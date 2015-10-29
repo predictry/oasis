@@ -39,4 +39,10 @@ public class JobController {
 		return "job/fragment :: detail_popup";
 	}
 	
+	@RequestMapping(value = "/clear", method = RequestMethod.GET)
+	public String clear() {
+		jobRepository.deleteAllInBatch();
+		return "redirect:/job";
+	}
+	
 }
