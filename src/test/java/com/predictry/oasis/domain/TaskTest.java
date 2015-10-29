@@ -36,7 +36,7 @@ public class TaskTest {
 		
 		ObjectMapper objectMapper = new ObjectMapper();
 		ScriptEngineManager manager = new ScriptEngineManager();
-		Job job = task.execute(objectMapper, manager, "job1", "tenant1");
+		Job job = task.createJob(objectMapper, manager, "job1", "tenant1");
 		Map<String, Object> parsedPayload = job.getPayloadAsMap();
 		assertEquals("compute-recommendation", parsedPayload.get("type"));
 		assertEquals("job1", parsedPayload.get("jobId"));

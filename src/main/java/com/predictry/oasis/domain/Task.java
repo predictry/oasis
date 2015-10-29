@@ -71,7 +71,7 @@ public class Task {
 		return result.toString();
 	}
 	
-	public Job execute(ObjectMapper objectMapper, ScriptEngineManager scriptEngineManager, String jobId, String tenantId) throws JsonParseException, JsonMappingException, IOException {
+	public Job createJob(ObjectMapper objectMapper, ScriptEngineManager scriptEngineManager, String jobId, String tenantId) throws JsonParseException, JsonMappingException, IOException {
 		String evaluatedPayload = evaluatePayload(scriptEngineManager);
 		// Parsed the payload into Map
 		@SuppressWarnings("unchecked")

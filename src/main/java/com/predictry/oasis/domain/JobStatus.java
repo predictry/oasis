@@ -8,14 +8,19 @@ package com.predictry.oasis.domain;
  */
 public enum JobStatus {
 
-	STARTED("Started", true), FINISH("Finish", false), FAIL("Fail", false), REPEAT("Repeat", true);
+	STARTED("Started", true, "text-primary"), 
+	FINISH("Finish", false, "text-success"), 
+	FAIL("Fail", false, "text-danger"), 
+	REPEAT("Repeat", true, "text-warning");
 	
 	private String description;
 	private boolean running;
+	private String cssClass;
 
-	private JobStatus(String description, boolean running) {
+	private JobStatus(String description, boolean running, String cssClass) {
 		this.description = description;
 		this.running = running;
+		this.cssClass = cssClass;
 	}
 	
 	public String getDescription() {
@@ -24,6 +29,10 @@ public enum JobStatus {
 	
 	public boolean isRunning() {
 		return running;
+	}
+	
+	public String getCssClass() {
+		return cssClass;
 	}
 
 	public String toString() {

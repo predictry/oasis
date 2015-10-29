@@ -131,14 +131,14 @@ public class Application {
 		return String.format("%s.COMMAND", getServiceProvider().getName().toUpperCase());
 	}
 	
-	public Job execute(ObjectMapper objectMapper, ScriptEngineManager scriptEngineManager) throws JsonParseException, JsonMappingException, IOException {
+	public Job createJob(ObjectMapper objectMapper, ScriptEngineManager scriptEngineManager) throws JsonParseException, JsonMappingException, IOException {
 		if (tasks.isEmpty()) {
 			LOG.warn("No task to execute for application [" + getName() + "]");
 			return null;
 		}
 		Task task = tasks.get(0);
 		String jobId = String.format("%s_%s_%s", getName(), String.valueOf(tasks.indexOf(task)), LocalDateTime.now().toString("YYYY-MM-dd_HH:mm:ss_SSSS"));
-		Job job = task.execute(objectMapper, scriptEngineManager, jobId, getTenant().getId());
+		Job job = task.createJob(objectMapper, scriptEngineManager, jobId, getTenant().getId());
 		job.setApplication(this);
 		job.setTaskIndex(0);
 		return job;

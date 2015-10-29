@@ -66,13 +66,13 @@
                             <span th:text="${job.taskIndex}">0</span>
                         </td>
                         <td>
-                            <span th:text="${job.startTime?.toString('dd-MM-YYYY hh:mm:ss')}">2015-10-01 10:10:10</span>
+                            <span th:text="${job.startTime?.toString('dd-MM-YYYY HH:mm:ss')}">2015-10-01 10:10:10</span>
                         </td>
                         <td>
-                            <span th:text="${job.endTime?.toString('dd-MM-YYYY hh:mm:ss')}">2015-10-02 20:10:10</span>
+                            <span th:text="${job.endTime?.toString('dd-MM-YYYY HH:mm:ss')}">2015-10-02 20:10:10</span>
                         </td>
                         <td>
-                            <span th:text="${job.lastRepeat?.toString('dd-MM-YYYY hh:mm:ss')}">2015-10-03 10:05:10</span>
+                            <span th:text="${job.lastRepeat?.toString('dd-MM-YYYY HH:mm:ss')}">2015-10-03 10:05:10</span>
                         </td>
                         <td>
                             <span th:text="${#numbers.formatDecimal(job.processingTime,0,2)}">10</span>
@@ -81,7 +81,7 @@
                             <span th:text="${job.numOfRepeat}">0</span>
                         </td>
                         <td>
-                            <span th:text="${job.status}">Started</span>
+                            <span th:text="${job.status}" th:class="${job.status.cssClass}">Started</span>
                         </td>
                         <td>
                         </td>

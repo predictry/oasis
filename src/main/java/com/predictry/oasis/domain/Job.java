@@ -24,6 +24,8 @@ import org.joda.time.LocalDateTime;
 @Entity
 public class Job {
 
+	private static final int MAX_RETRIES = 20;
+
 	@Id @GeneratedValue
 	private Long id;
 	
@@ -171,6 +173,18 @@ public class Job {
 
 	public void setPayloadAsMap(Map<String, Object> payloadAsMap) {
 		this.payloadAsMap = payloadAsMap;
+	}
+	
+	public boolean retry() {
+		lastRepeat = LocalDateTime.now();
+		if (numOfRepeat >= MAX_RETRIES) {
+			status = JobStatus.FAIL;
+			return false;
+		} else {
+			status = JobStatus.REPEAT;
+			numOfRepeat++;
+			return true;
+		}
 	}
 	
 }
