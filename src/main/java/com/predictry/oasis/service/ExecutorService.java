@@ -51,11 +51,12 @@ public class ExecutorService {
 	public void execute(Long id) throws JsonParseException, JsonMappingException, IOException {
 		Application app = appRepository.findOne(id);
 		if (app != null) {
-			Job job = app.createJob(objectMapper, scriptEngineManager);
-			if (job != null) {
-				jmsTemplate.send(app.getQueueName(), new JsonMessageCreator(objectMapper, job.getPayloadAsMap()));
-				jobRepository.save(job);
-			}
+			app.createJobs(objectMapper, scriptEngineManager).forEach(job -> {
+				if (job != null) {
+					jmsTemplate.send(app.getQueueName(), new JsonMessageCreator(objectMapper, job.getPayloadAsMap()));
+					jobRepository.save(job);
+				}
+			});
 		} else {
 			LOG.warn("Can't find application instance for id [" + id + "]");
 		}
