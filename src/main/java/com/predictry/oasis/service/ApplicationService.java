@@ -44,14 +44,14 @@ public class ApplicationService {
 		app = appRepository.save(app);
 		if (addNew) {
 			SchedulerOperations schedulerOperations = new SchedulerOperations(scheduler, app);
-			schedulerOperations.schedule(scheduler);
+			schedulerOperations.schedule();
 		}
 	}
 	
 	public void delete(Application app) throws SchedulerException {
 		if (app != null) {
 			SchedulerOperations schedulerOperations = new SchedulerOperations(scheduler, app);
-			schedulerOperations.removeSchedule(scheduler);
+			schedulerOperations.removeSchedule();
 			appRepository.delete(app);
 			appRepository.flush();
 		}

@@ -16,6 +16,7 @@ import javax.persistence.OrderColumn;
 import javax.script.ScriptEngineManager;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -57,6 +58,9 @@ public class Application {
 	
 	@NotNull @ManyToOne
 	private ServiceProvider serviceProvider;
+	
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+	private LocalDateTime lastExecuted;
 
 	public Long getId() {
 		return id;
@@ -98,6 +102,14 @@ public class Application {
 		this.serviceProvider = serviceProvider;
 	}
 	
+	public LocalDateTime getLastExecuted() {
+		return lastExecuted;
+	}
+
+	public void setLastExecuted(LocalDateTime lastExecuted) {
+		this.lastExecuted = lastExecuted;
+	}
+
 	public List<Task> getTasks() {
 		return tasks;
 	}
@@ -158,6 +170,7 @@ public class Application {
 			job.setTaskIndex(taskIndex);
 			result.add(job);
 		}
+		setLastExecuted(LocalDateTime.now());
 		return result;
 	}
 }

@@ -22,6 +22,7 @@ import com.predictry.oasis.domain.Task;
 import com.predictry.oasis.repository.ServiceProviderRepository;
 import com.predictry.oasis.repository.TenantRepository;
 import com.predictry.oasis.service.ApplicationService;
+import com.predictry.oasis.service.ExecutorService;
 
 /**
  * CRUD controller for <code>Application</code>.
@@ -35,6 +36,9 @@ public class ApplicationController {
 
 	@Autowired
 	private ApplicationService applicationService;
+	
+	@Autowired
+	private ExecutorService executorService;
 	
 	@Autowired
 	private ServiceProviderRepository serviceProviderRepository;
@@ -79,6 +83,12 @@ public class ApplicationController {
 	@RequestMapping(value = "/delete/{id}")
 	public String delete(@PathVariable("id") Application app) throws SchedulerException {
 		applicationService.delete(app);
+		return "redirect:/app";
+	}
+	
+	@RequestMapping(value = "/execute/{id}")
+	public String execute(@PathVariable("id") Application app) throws IOException {
+		executorService.execute(app.getId());
 		return "redirect:/app";
 	}
 	

@@ -51,7 +51,7 @@ public class SchedulerOperations {
 		this.app = app;
 	}
 	
-	public void schedule(Scheduler scheduler) throws SchedulerException {
+	public void schedule() throws SchedulerException {
 		Asserts.notNull(app.getId(), "Id can't be null!");
 		Asserts.notNull(app.getName(), "Name can't be empty!");
 		Asserts.notNull(app.getCron(), "Cron expression can't be empty!");
@@ -65,7 +65,7 @@ public class SchedulerOperations {
 		scheduler.scheduleJob(trigger);
 	}	
 	
-	public void removeSchedule(Scheduler scheduler) throws SchedulerException {
+	public void removeSchedule() throws SchedulerException {
 		Asserts.notNull(app.getId(), "Id can't be null!");
 		Asserts.notNull(app.getName(), "Name can't be empty!");
 		Asserts.notNull(app.getCron(), "Cron expression can't be empty!");
