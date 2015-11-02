@@ -150,7 +150,7 @@ public class Application {
 			return null;
 		}
 		List<Job> result = new ArrayList<>();
-		for (int taskIndex=0; taskIndex < tasks.size(); taskIndex++) {
+		for (int taskIndex = 0; taskIndex < tasks.size(); taskIndex++) {
 			Task task = tasks.get(taskIndex);
 			String jobId = String.format("%s_%s_%s", getName(), String.valueOf(taskIndex), LocalDateTime.now().toString("YYYY-MM-dd_HH:mm:ss_SSSS"));
 			Job job = task.createJob(objectMapper, scriptEngineManager, jobId, getTenant().getId());
