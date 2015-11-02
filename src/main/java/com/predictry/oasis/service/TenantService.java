@@ -30,6 +30,9 @@ public class TenantService {
 	@Autowired
 	private TenantRepository tenantRepository;
 	
+	@Autowired
+	private ApplicationService applicationService;
+	
 	/**
 	 * Receive tenant related events such as <code>new</code>, <code>disable</code>,
 	 * <code>enable</code>, and <code>delete</code>.
@@ -60,7 +63,12 @@ public class TenantService {
 			case "new":
 				if (tenantRepository.findOne(tenantId) == null) {
 					tenant = new Tenant(tenantId, tenantId);
-					tenantRepository.save(tenant);
+					tenant = tenantRepository.save(tenant);
+					try {
+						applicationService.addDefault(tenant);
+					} catch (Exception e) {
+						LOG.error("Failed to create default app for tenant id [" + tenantId + "]");
+					}
 				} else {
 					LOG.warn("Ignored existing tenant id [" + tenantId + "] for new action");
 				}

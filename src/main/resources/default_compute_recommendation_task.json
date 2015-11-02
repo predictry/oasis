@@ -1,0 +1,15 @@
+{
+   "type": "compute-recommendation",
+   "payload": {
+      "date": "${CURRENT_DATE}",
+      "algorithm": {                                    
+         "name": "duo"
+      },
+      "output": {                                       
+         "type": "s3",
+         "bucket": "predictry",
+         "prefix": "data",
+         "region": "eu-west-1"
+     }
+  }
+}

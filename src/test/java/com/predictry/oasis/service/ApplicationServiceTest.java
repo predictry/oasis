@@ -24,8 +24,10 @@ import com.predictry.oasis.config.SchedulerConfig;
 import com.predictry.oasis.domain.Application;
 import com.predictry.oasis.domain.ServiceProvider;
 import com.predictry.oasis.domain.Task;
+import com.predictry.oasis.domain.Tenant;
 import com.predictry.oasis.job.ApplicationJob;
 import com.predictry.oasis.repository.ServiceProviderRepository;
+import com.predictry.oasis.repository.TenantRepository;
 
 public class ApplicationServiceTest extends TestCase {
 	
@@ -34,6 +36,9 @@ public class ApplicationServiceTest extends TestCase {
 	
 	@Autowired
 	private ApplicationService applicationService;
+	
+	@Autowired
+	private TenantRepository tenantRepository;
 	
 	@Autowired
 	private Scheduler scheduler;
@@ -78,6 +83,33 @@ public class ApplicationServiceTest extends TestCase {
 			SchedulerConfig.QUARTZ_APP_GROUP));
 		TriggerKey triggerKey = triggerKeys.stream().filter(t -> t.getName().equals("test application")).findFirst().get();
 		assertEquals("Only one schedule should be created!", 1, triggerKeys.stream().filter(t -> t.getName().equals("test application")).count());
+		assertNotNull(triggerKey);
+		Trigger trigger = scheduler.getTrigger(triggerKey);
+		assertNotNull(trigger.getNextFireTime());
+		JobDetail jobDetail = scheduler.getJobDetail(trigger.getJobKey());
+		assertEquals(ApplicationJob.class, jobDetail.getJobClass());
+	}
+	
+	@Test
+	public void testAddDefault() throws SchedulerException {
+		Tenant tenant = new Tenant("tenant1", "tenant1");
+		tenant = tenantRepository.save(tenant);
+		Application app = applicationService.addDefault(tenant);
+		
+		// Check if application is created
+		assertEquals("tenant1_APP", app.getName());
+		assertNotNull("0 50 * * * ?", app.getCron());
+		assertEquals(tenant, app.getTenant());
+		assertEquals("sp1", app.getServiceProvider().getName());
+		assertEquals(2, app.getTasks().size());
+		assertNotNull(app.getTask(0).getPayload());
+		assertNotNull(app.getTask(1).getPayload());
+		
+		// Check if it is scheduled
+		Set<TriggerKey> triggerKeys = scheduler.getTriggerKeys(groupEquals(
+				SchedulerConfig.QUARTZ_APP_GROUP));
+		TriggerKey triggerKey = triggerKeys.stream().filter(t -> t.getName().equals("tenant1_APP")).findFirst().get();
+		assertEquals("Only one schedule should be created!", 1, triggerKeys.stream().filter(t -> t.getName().equals("tenant1_APP")).count());
 		assertNotNull(triggerKey);
 		Trigger trigger = scheduler.getTrigger(triggerKey);
 		assertNotNull(trigger.getNextFireTime());

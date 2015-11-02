@@ -1,0 +1,12 @@
+{
+   "type": "import-record",
+   "payload": {
+      "date": "${JODA_TIME.toString('YYYY-MM-dd')}",
+      "hour": ${JODA_TIME. minusHours(2).getHourOfDay()},
+      "input": {
+         "type": "tapirus",
+         "host": "localhost",
+         "port": 1999
+      }
+   }
+}
