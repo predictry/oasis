@@ -238,6 +238,7 @@ accepts payload such as:
 {
    "tenant": "the_tenant_id",
    "date": "2015-12-01", 
+   "hour": 12
    "algorithm": {                                    // <1>
      "name": "algo-1",                               // <2>
      "params": {                                     // <3>

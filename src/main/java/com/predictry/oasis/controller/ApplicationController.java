@@ -7,6 +7,8 @@ import javax.script.ScriptEngineManager;
 
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -53,8 +55,10 @@ public class ApplicationController {
 	private ScriptEngineManager scriptEngineManager;
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String list(Model model) throws SchedulerException {
-		model.addAttribute("apps", applicationService.list());
+	public String list(Model model, Pageable pageable) throws SchedulerException {
+		Page<Application> page = applicationService.findAll(pageable);
+		model.addAttribute("apps", page.getContent());
+		model.addAttribute("page", page);
 		return "app/list";
 	}
 	

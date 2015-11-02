@@ -56,7 +56,7 @@ public class Task {
 			result.append(getPayload());
 		} else {
 			engine.put("CURRENT_DATE", LocalDateTime.now().toString("YYYY-MM-dd"));
-			engine.put("CURRENT_HOUR", LocalDateTime.now().toString("HH"));
+			engine.put("CURRENT_HOUR", LocalDateTime.now().toString("H"));
 			engine.put("JODA_TIME", LocalDateTime.now());
 			Matcher m = EXP_PATTERN.matcher(payload);
 			while (m.find()) {

@@ -70,7 +70,7 @@ public class ApplicationServiceTest extends TestCase {
 	@Test
 	public void testAdd() throws SchedulerException {
 		// Check if application is created
-		List<Application> apps = applicationService.list();
+		List<Application> apps = applicationService.findAll();
 		app = apps.stream().filter(a ->  a.getName().equals("test application")).findFirst().get();
 		assertNotNull(app.getId());
 		assertEquals("test application", app.getName());
@@ -125,7 +125,7 @@ public class ApplicationServiceTest extends TestCase {
 		applicationService.add(app);
 		
 		// Check if new task is added
-		List<Application> apps = applicationService.list();
+		List<Application> apps = applicationService.findAll();
 		app = apps.stream().filter(a ->  a.getName().equals("test application")).findFirst().get();
 		assertEquals(2, app.getTasks().size());
 		
@@ -146,7 +146,7 @@ public class ApplicationServiceTest extends TestCase {
 		applicationService.delete(app);
 		
 		// Make sure it is not in database anymore
-		List<Application> apps = applicationService.list();
+		List<Application> apps = applicationService.findAll();
 		assertEquals(0, apps.stream().filter(a -> a.getName().equals("test application")).count());
 		
 		// Make sure it is not in the scheduler

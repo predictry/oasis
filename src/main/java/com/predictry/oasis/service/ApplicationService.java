@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.predictry.oasis.domain.Application;
@@ -56,7 +58,11 @@ public class ApplicationService {
 		return appRepository.findOne(id);
 	}
 	
-	public List<Application> list() throws SchedulerException {
+	public Page<Application> findAll(Pageable pageable) {
+		return appRepository.findAll(pageable);
+	}
+	
+	public List<Application> findAll() {
 		return appRepository.findAll();
 	}
 	

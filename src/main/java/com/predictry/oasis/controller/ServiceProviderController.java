@@ -1,6 +1,8 @@
 package com.predictry.oasis.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -29,8 +31,10 @@ public class ServiceProviderController {
 	private HeartbeatService heartbeatService;
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String list(Model model) {
-		model.addAttribute("serviceProviders", serviceProviderRepository.findAll());
+	public String list(Model model, Pageable pageable) {
+		Page<ServiceProvider> page = serviceProviderRepository.findAll(pageable);
+		model.addAttribute("serviceProviders", page.getContent());
+		model.addAttribute("page", page);
 		return "serviceProvider/list";
 	}
 	

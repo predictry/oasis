@@ -18,11 +18,18 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Tenant</th>
-                        <th>Service Provider</th>
-                        <th>Cron</th>
-                        <th>Last Executed</th>
+                        <th>
+                            <a th:href="@{${url}(page=${page.number}, size=${page.size}, sort='name,ASC')}">Name</a>
+                        </th>
+                        <th>
+                            <a th:href="@{${url}(page=${page.number}, size=${page.size}, sort='serviceProvider.name,ASC')}">Service Provider</a>
+                        </th>                        
+                        <th>
+                            <a th:href="@{${url}(page=${page.number}, size=${page.size}, sort='cron,ASC')}">Cron</a>
+                        </th>
+                        <th>
+                            <a th:href="@{${url}(page=${page.number}, size=${page.size}, sort='lastExecuted,ASC')}">Last Executed</a>
+                        </th>                                                
                         <th>&nbsp;</th>                     
                     </tr>
                 </thead>
@@ -54,6 +61,8 @@
                     </tr>
                 </tbody>
             </table>
+            
+            <div th:include="fragments :: pagination (${page})"></div>
         </div>
         
         <p>
