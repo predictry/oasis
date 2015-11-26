@@ -22,11 +22,17 @@
                             <a th:href="@{${url}(page=${page.number}, size=${page.size}, sort='name,ASC')}">Name</a>
                         </th>   
                         <th>
-                            <a th:href="@{${url}(page=${page.number}, size=${page.size}, sort='baseUrl,ASC')}">Base URL</a>
+                            <a th:href="@{${url}(page=${page.number}, size=${page.size}, sort='instanceId,ASC')}">Instance Id</a>
+                        </th>   
+                        <th>
+                            <a th:href="@{${url}(page=${page.number}, size=${page.size}, sort='region,ASC')}">Region</a>
+                        </th>
+                        <th>
+                            <a th:href="@{${url}(page=${page.number}, size=${page.size}, sort='lastStarted,ASC')}">Last Started</a>
                         </th>   
                         <th>
                             <a th:href="@{${url}(page=${page.number}, size=${page.size}, sort='status,ASC')}">Status</a>
-                        </th>   
+                        </th>
                         <th>&nbsp;</th>
                     </tr>
                 </thead>
@@ -37,11 +43,17 @@
                                 <span th:text="${serviceProvider.name}">TEST</span>
                             </a>
                         </td>
-                        <td th:text="${serviceProvider.baseUrl}">http://localhost:9999/test</td>
-                        <td th:text="${serviceProvider.getStatusMessage()}" th:class="${serviceProvider.getStatus() == T(com.predictry.oasis.domain.ServiceProviderStatus).RUNNING}? text-success: text-danger">Running (2010-01-01T10:00:00)</td>
+                        <td th:text="${serviceProvider.instanceId}">http://localhost:9999/test</td>
+                        <td th:text="${serviceProvider.region}">ap-southeast-1</td>
+                        <td th:text="${serviceProvider?.lastStarted?.toString('dd-MM-YYYY HH:mm')?:''}">2010-01-01 10:00</td>
+                        <td th:text="${serviceProvider.getStatusMessage()}" th:class="${serviceProvider.isRunning()}? text-success: text-danger">Running (2010-01-01T10:00:00)</td>
                         <td>
-                            <a class="btn btn-sm" role="button" id="ping"
-                                th:href="@{'/serviceProvider/ping/' + ${serviceProvider.id}}">Ping</a>
+                            <a class="btn btn-sm" role="button" id="start"
+                                th:href="@{'/serviceProvider/start/' + ${serviceProvider.id}}">Start</a>
+                            <a class="btn btn-sm" role="button" id="stop"
+                                th:href="@{'/serviceProvider/stop/' + ${serviceProvider.id}}">Stop</a>
+                            <a class="btn btn-sm" role="button" id="check"
+                                th:href="@{'/serviceProvider/check/' + ${serviceProvider.id}}">Check</a>
                             <a class="btn btn-danger btn-sm" role="button" id="delete" 
                                 th:href="@{'/serviceProvider/delete/' + ${serviceProvider.id}}">Delete</a>
                         </td>

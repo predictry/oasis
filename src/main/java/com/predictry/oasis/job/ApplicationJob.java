@@ -27,7 +27,7 @@ public class ApplicationJob extends OMSJob {
 		try {
 			executorService.execute(appId);
 		} catch (Exception e) {
-			LOG.error("Error while executing applicatoin [" + appId + "]", e);
+			LOG.error("Error while executing application [" + appId + "]", e);
 		}
 	}
 

@@ -53,7 +53,8 @@ public class ApplicationServiceTest extends TestCase {
 		// Create new service provider
 		ServiceProvider sp = new ServiceProvider();
 		sp.setName("sp1");
-		sp.setBaseUrl("http://www.xxx.com");
+		sp.setInstanceId("i1234");
+		sp.setRegion("ap-southeast-1");
 		sp = serviceProviderRepository.save(sp);
 		
 		// Create new app

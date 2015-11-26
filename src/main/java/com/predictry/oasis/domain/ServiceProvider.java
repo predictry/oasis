@@ -17,8 +17,6 @@ import org.joda.time.LocalDateTime;
 @Entity
 public class ServiceProvider {
 	
-	public static final String URI_HEARTBEAT = "/heartbeat";
-	
 	@Id @GeneratedValue
 	private Long id;
 	
@@ -26,12 +24,18 @@ public class ServiceProvider {
 	private String name;
 	
 	@NotBlank
-	private String baseUrl;
+	private String instanceId;
+	
+	@NotBlank
+	private String region;
 	
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
 	private LocalDateTime lastChecked;
 	
-	private ServiceProviderStatus status;
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+	private LocalDateTime lastStarted;
+	
+	private Boolean running = Boolean.FALSE;
 
 	public Long getId() {
 		return id;
@@ -49,14 +53,6 @@ public class ServiceProvider {
 		this.name = name;
 	}
 
-	public String getBaseUrl() {
-		return baseUrl;
-	}
-
-	public void setBaseUrl(String baseUrl) {
-		this.baseUrl = baseUrl;
-	}
-
 	public LocalDateTime getLastChecked() {
 		return lastChecked;
 	}
@@ -64,15 +60,39 @@ public class ServiceProvider {
 	public void setLastChecked(LocalDateTime lastChecked) {
 		this.lastChecked = lastChecked;
 	}
-
-	public ServiceProviderStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(ServiceProviderStatus status) {
-		this.status = status;
-	}
 	
+	public LocalDateTime getLastStarted() {
+		return lastStarted;
+	}
+
+	public void setLastStarted(LocalDateTime lastStarted) {
+		this.lastStarted = lastStarted;
+	}
+
+	public String getInstanceId() {
+		return instanceId;
+	}
+
+	public void setInstanceId(String instanceId) {
+		this.instanceId = instanceId;
+	}
+
+	public String getRegion() {
+		return region;
+	}
+
+	public void setRegion(String region) {
+		this.region = region;
+	}
+
+	public boolean isRunning() {
+		return (running == null)? false: running;
+	}
+
+	public void setRunning(boolean running) {
+		this.running = running;
+	}
+
 	/**
 	 * This method return informational status message.
 	 * 
@@ -80,22 +100,19 @@ public class ServiceProvider {
 	 */
 	public String getStatusMessage() {
 		StringBuilder statusMessage = new StringBuilder();
-		if (getStatus() != null) {
-			statusMessage.append(getStatus().toString());
+		statusMessage.append(isRunning()? "Running": "Stopped");
+		if (getLastChecked() != null) {
 			statusMessage.append(" (");
 			statusMessage.append(getLastChecked().toString("dd-MM-YYYY HH:MM:ss"));
 			statusMessage.append(')');
-		} else {
-			statusMessage.append("Unknown");
 		}
 		return statusMessage.toString();
 	}
 
 	@Override
 	public String toString() {
-		return "ServiceProvider [id=" + id + ", name=" + name + ", baseUrl="
-				+ baseUrl + ", lastChecked=" + lastChecked + ", status="
-				+ status + "]";
+		return "ServiceProvider [id=" + id + ", name=" + name + ", instanceId=" + instanceId + ", region=" + region
+				+ ", lastChecked=" + lastChecked + ", running=" + running + "]";
 	}
 
 }

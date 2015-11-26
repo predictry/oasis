@@ -60,6 +60,7 @@ dependencies {
     // Amazon SDK
     compile 'com.amazonaws:aws-java-sdk-s3:1.10.17'
     compile 'com.amazonaws:aws-java-sdk-cloudwatch:1.10.17'
+    compile 'com.amazonaws:aws-java-sdk-ec2:1.10.17'
 
     // Hibernate
     compile 'org.hibernate:hibernate-entitymanager:4.3.9.Final'

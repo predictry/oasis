@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.predictry.oasis.domain.ServiceProvider;
 import com.predictry.oasis.repository.ServiceProviderRepository;
-import com.predictry.oasis.service.HeartbeatService;
+import com.predictry.oasis.service.EC2Service;
 
 /**
  * CRUD controller for ServiceProvider.
@@ -28,7 +28,7 @@ public class ServiceProviderController {
 	private ServiceProviderRepository serviceProviderRepository;
 	
 	@Autowired
-	private HeartbeatService heartbeatService;
+	private EC2Service ec2Service;
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String list(Model model, Pageable pageable) {
@@ -63,9 +63,21 @@ public class ServiceProviderController {
 		return "redirect:/serviceProvider";
 	}
 	
-	@RequestMapping(value = "/ping/{id}")
-	public String ping(@PathVariable("id") ServiceProvider serviceProvider) {
-		heartbeatService.ping(serviceProvider);
+	@RequestMapping(value = "/start/{id}")
+	public String start(@PathVariable("id") ServiceProvider serviceProvider) {
+		ec2Service.startInstance(serviceProvider);
+		return "redirect:/serviceProvider";
+	}
+	
+	@RequestMapping(value = "/stop/{id}")
+	public String stop(@PathVariable("id") ServiceProvider serviceProvider) {
+		ec2Service.stopInstance(serviceProvider);
+		return "redirect:/serviceProvider";
+	}
+	
+	@RequestMapping(value = "/check/{id}")
+	public String check(@PathVariable("id") ServiceProvider serviceProvider) {
+		ec2Service.checkStatus(serviceProvider);
 		return "redirect:/serviceProvider";
 	}
 	
