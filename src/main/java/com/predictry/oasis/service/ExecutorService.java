@@ -43,6 +43,9 @@ public class ExecutorService {
 	private JobRepository jobRepository;
 	
 	@Autowired
+	private EC2Service ec2Service;
+	
+	@Autowired
 	private ObjectMapper objectMapper;
 	
 	@Autowired
@@ -51,6 +54,10 @@ public class ExecutorService {
 	public void execute(Long id) throws JsonParseException, JsonMappingException, IOException {
 		Application app = appRepository.findOne(id);
 		if (app != null) {
+			// Launch EC2 instance associated with this service provider
+			ec2Service.startInstance(app.getServiceProvider());
+			
+			// Send messages to the service provider
 			app.createJobs(objectMapper, scriptEngineManager).forEach(job -> {
 				if (job != null) {
 					jmsTemplate.send(app.getQueueName(), new JsonMessageCreator(objectMapper, job.getPayloadAsMap()));
@@ -72,5 +79,5 @@ public class ExecutorService {
 		}
 		jobRepository.save(job);
 	}
-
+	
 }

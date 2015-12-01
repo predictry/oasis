@@ -39,7 +39,7 @@ public class JmsConfig {
 		ActiveMQConnectionFactory targetFactory = new ActiveMQConnectionFactory();
 		targetFactory.setUserName("admin");
 		targetFactory.setPassword("admin");
-		targetFactory.setBrokerURL("failover:tcp://localhost:61616");
+		targetFactory.setBrokerURL("failover:tcp://fisher.predictry.com:61616");
 		targetFactory.setUseAsyncSend(true);
 		factory.setTargetConnectionFactory(targetFactory);
 		return targetFactory;

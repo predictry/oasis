@@ -1,7 +1,7 @@
 {
    "type": "compute-recommendation",
    "payload": {
-      "date": "${CURRENT_DATE}",
+      "date": "${YESTERDAY}",
       "algorithm": {                                    
          "name": "duo"
       },

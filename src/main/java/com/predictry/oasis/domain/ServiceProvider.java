@@ -86,7 +86,7 @@ public class ServiceProvider {
 	}
 
 	public boolean isRunning() {
-		return (running == null)? false: running;
+		return (running == null) ? false : running;
 	}
 
 	public void setRunning(boolean running) {
@@ -100,7 +100,7 @@ public class ServiceProvider {
 	 */
 	public String getStatusMessage() {
 		StringBuilder statusMessage = new StringBuilder();
-		statusMessage.append(isRunning()? "Running": "Stopped");
+		statusMessage.append(isRunning() ? "Running" : "Stopped");
 		if (getLastChecked() != null) {
 			statusMessage.append(" (");
 			statusMessage.append(getLastChecked().toString("dd-MM-YYYY HH:MM:ss"));

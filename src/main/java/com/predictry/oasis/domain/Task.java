@@ -55,6 +55,7 @@ public class Task {
 			LOG.warn("Can't find 'nashorn' script engine.");
 			result.append(getPayload());
 		} else {
+			engine.put("YESTERDAY", LocalDateTime.now().minusDays(1).toString("YYYY-MM-dd"));
 			engine.put("CURRENT_DATE", LocalDateTime.now().toString("YYYY-MM-dd"));
 			engine.put("CURRENT_HOUR", LocalDateTime.now().toString("H"));
 			engine.put("JODA_TIME", LocalDateTime.now());

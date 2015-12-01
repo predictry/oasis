@@ -282,6 +282,8 @@ The payload required for this service is something like:
 <1> This is the hour to read from Tapirus.
 <2> This is the location of Tapirus data source.
 
+If `hour` is omitted from the Json, then service provider should assume the request is for the entire day (hour `0` to `23`).
+
 ==== Sync Item Store
 
 Sync item store service (`sync-item-store`) is used to push the calculated recommendation (offline) into another data source

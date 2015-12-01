@@ -1,11 +1,10 @@
 {
    "type": "import-record",
    "payload": {
-      "date": "${JODA_TIME.toString('YYYY-MM-dd')}",
-      "hour": ${JODA_TIME. minusHours(2).getHourOfDay()},
+      "date": "${YESTERDAY}",
       "input": {
          "type": "tapirus",
-         "host": "localhost",
+         "host": "fisher.predictry.com",
          "port": 1999
       }
    }

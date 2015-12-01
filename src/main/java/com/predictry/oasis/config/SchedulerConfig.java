@@ -12,6 +12,7 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 
 import com.predictry.oasis.job.ApplicationJob;
+import com.predictry.oasis.job.EC2TerminatorJob;
 import com.predictry.oasis.job.HeartbeatJob;
 import com.predictry.oasis.job.KeeperJob;
 import com.predictry.oasis.job.MetricJob;
@@ -31,13 +32,17 @@ public class SchedulerConfig {
 	
 	public static final String QUARTZ_METRIC_JOB_GROUP = "METRIC_GROUP";
 	public static final String QUARTZ_METRIC_JOB_NAME = "METRIC_JOB";
-	public static final int QUARTZ_METRIC_JOB_INTERVAL = 60 * 60 * 1000; // 60 minutes
+	public static final int QUARTZ_METRIC_JOB_INTERVAL = 60 * 60 * 1000; // 1 hour
 	
 	public static final String QUARTZ_KEEPER_JOB_GROUP = "KEEPER_GROUP";
 	public static final String QUARTZ_KEEPER_JOB_NAME = "KEEPER_JOB";
-	public static final int QUARTZ_KEEPER_JOB_INTERVAL =  3 * 60 * 1000; // 3 minutes
+	public static final int QUARTZ_KEEPER_JOB_INTERVAL =  3 * 60 * 1000; // 3 hours
 	
-	public static final int KEEPER_JOB_RETRY_INTERVAL = 30 * 60;  // 30 minutes
+	public static final String QUARTZ_EC2_TERMINATOR_GROUP = "EC2_TERMINATOR_GROUP";
+	public static final String QUARTZ_EC2_TERMINATOR_NAME = "EC2_TERMINATOR_JOB";
+	public static final int QUARTZ_EC2_JOB_INTERVAL =  30 * 60 * 1000; // 30 minutes
+	
+	public static final int KEEPER_JOB_RETRY_INTERVAL = 30 * 60 * 1000;  // 30 minutes
 	
 	public static final String QUARTZ_APP_GROUP = "APP_GROUP";
 	
@@ -108,6 +113,22 @@ public class SchedulerConfig {
 	}
 	
 	/**
+	 * Bean definition to terminate EC2.
+	 * 
+	 * @return <code>JobDetailFactoryBean</code>.
+	 */
+	@Bean
+	public JobDetailFactoryBean ec2TerminatorJobFactory() {
+		JobDetailFactoryBean ec2TerminatorJobFactory = 
+			new JobDetailFactoryBean();
+		ec2TerminatorJobFactory.setJobClass(EC2TerminatorJob.class);
+		ec2TerminatorJobFactory.setGroup(QUARTZ_EC2_TERMINATOR_GROUP);
+		ec2TerminatorJobFactory.setName(QUARTZ_EC2_TERMINATOR_NAME);
+		ec2TerminatorJobFactory.setDurability(true);
+		return ec2TerminatorJobFactory;
+	}
+	
+	/**
 	 * Bean definition for Quartz Trigger that executes heartbeat
 	 * service.
 	 * 
@@ -149,6 +170,19 @@ public class SchedulerConfig {
 	}
 	
 	/**
+	 * Bean definition for EC2 terminator service.
+	 * 
+	 * @return <code>CronTriggerFactoryBean</code>.
+	 */
+	@Bean
+	public SimpleTriggerFactoryBean ec2TerminatorTriggerFactory() {
+		SimpleTriggerFactoryBean cronTriggerFactory = new SimpleTriggerFactoryBean();
+		cronTriggerFactory.setJobDetail(ec2TerminatorJobFactory().getObject());
+		cronTriggerFactory.setRepeatInterval(QUARTZ_EC2_JOB_INTERVAL);
+		return cronTriggerFactory;
+	}
+	
+	/**
 	 * Bean definition for creating Quartz scheduler instance.
 	 *  
 	 * @return <code>SchedulerFactoryBean</code>.
@@ -165,9 +199,9 @@ public class SchedulerConfig {
 		props.put("org.quartz.jobStore.useProperties", "true");
 		schedulerFactory.setQuartzProperties(props);
 		schedulerFactory.setTriggers(heartbeatTriggerFactory().getObject(), metricTriggerFactory().getObject(), 
-			keeperTriggerFactory().getObject());
+			keeperTriggerFactory().getObject(), ec2TerminatorTriggerFactory().getObject());
 		schedulerFactory.setJobDetails(applicationJobFactory().getObject(), metricJobFactory().getObject(), 
-			keeperJobFactory().getObject());
+			keeperJobFactory().getObject(), ec2TerminatorJobFactory().getObject());
 		return schedulerFactory;
 	}
 	
