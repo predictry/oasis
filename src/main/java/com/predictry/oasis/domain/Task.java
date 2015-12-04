@@ -86,7 +86,7 @@ public class Task {
 		payloadAsMap.put("jobId", jobId);
 		
 		// Create and return new job
-		Job job = new Job(jobId, LocalDateTime.now(), evaluatedPayload);
+		Job job = new Job(jobId, LocalDateTime.now(), objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(payloadAsMap));
 		job.setPayloadAsMap(payloadAsMap);
 		return job; 
 	}
