@@ -120,7 +120,8 @@ public class Application {
 	
 	public void editTask(Task task, int index) {
 		if ((index >= 0) && (index < tasks.size())) {
-			tasks.set(index, task);
+			Task oldTask = tasks.get(index);
+			oldTask.setPayload(task.getPayload());
 		}
 	}
 	

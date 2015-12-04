@@ -67,31 +67,41 @@ public class ApplicationService {
 	}
 	
 	public Application add(@Valid Application app) throws SchedulerException {
-		boolean addNew = (app.getId() == null);
 		app = appRepository.save(app);
-		if (addNew) {
-			// If tasks are empty, that create default tasks
-			if (app.getTasks().isEmpty()) {
-				Task defaultImporRecordTask = new Task();
-				try (InputStream is = defaultImportRecordPayload.getInputStream()) {
-					defaultImporRecordTask.setPayload(IOUtils.toString(is));
-				} catch (IOException ex) {
-					LOG.error("Can't find default import record payload json file", ex);
-				}
-				Task defaultComputeRecTask = new Task();
-				try (InputStream is = defaultComputeRecommendationPayload.getInputStream()) {
-					defaultComputeRecTask.setPayload(IOUtils.toString(is));
-				} catch (IOException ex) {
-					LOG.error("Can't find default compute recommendation payload json file", ex);
-				}
-				app.addTask(defaultImporRecordTask);
-				app.addTask(defaultComputeRecTask);
-				app = appRepository.save(app);
+		if (app.getTasks().isEmpty()) {
+			Task defaultImporRecordTask = new Task();
+			try (InputStream is = defaultImportRecordPayload.getInputStream()) {
+				defaultImporRecordTask.setPayload(IOUtils.toString(is));
+			} catch (IOException ex) {
+				LOG.error("Can't find default import record payload json file", ex);
 			}
-			SchedulerOperations schedulerOperations = new SchedulerOperations(scheduler, app);
-			schedulerOperations.schedule();
+			Task defaultComputeRecTask = new Task();
+			try (InputStream is = defaultComputeRecommendationPayload.getInputStream()) {
+				defaultComputeRecTask.setPayload(IOUtils.toString(is));
+			} catch (IOException ex) {
+				LOG.error("Can't find default compute recommendation payload json file", ex);
+			}
+			app.addTask(defaultImporRecordTask);
+			app.addTask(defaultComputeRecTask);
+			app = appRepository.save(app);
 		}
+		SchedulerOperations schedulerOperations = new SchedulerOperations(scheduler, app);
+		schedulerOperations.schedule();
 		return app;
+	}
+	
+	public Application update(@Valid Application app) throws SchedulerException {
+		Application oldApp = appRepository.findOne(app.getId());
+		oldApp.setCron(app.getCron());
+		oldApp.setLastExecuted(app.getLastExecuted());
+		oldApp.setName(app.getName());
+		oldApp.setServiceProvider(app.getServiceProvider());
+		oldApp.setTenant(app.getTenant());
+		appRepository.save(oldApp);
+		SchedulerOperations schedulerOperations = new SchedulerOperations(scheduler, app);
+		schedulerOperations.removeSchedule();
+		schedulerOperations.schedule();
+		return oldApp;
 	}
 	
 	public Application addDefault(Tenant tenant) throws SchedulerException {
@@ -104,7 +114,7 @@ public class ApplicationService {
 			app.setServiceProvider(serviceProviders.get(0));
 		}
 		app.setTenant(tenant);
-		app.setCron("0 50 * * * ?");
+		app.setCron("0 0 2 * * ?");
 		return add(app);
 	}
 	

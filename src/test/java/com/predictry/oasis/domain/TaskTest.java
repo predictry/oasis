@@ -52,16 +52,19 @@ public class TaskTest {
 		
 		// Make sure job is created		
 		assertEquals("job1", job.getName());
-		assertEquals("{" +
-			"\"type\": \"compute-recommendation\"," +
-			"\"timeout\": 1000," +
-			"\"payload\": {" +
-			"\"id\": 10," +
-			"\"name\": \"my name\"," +
-			"\"value1\": \"test " + LocalDateTime.now().toString("YYYY-MM-dd") + "\"," +
-			"\"value2\": \"test " + LocalDateTime.now().toString("YYYY-MM-dd HH") + "\"," +
-			"\"value3\": 2" +
-			"}}", job.getPayload());
+		assertEquals("{\n" +
+			"  \"type\" : \"compute-recommendation\",\n" +
+			"  \"timeout\" : 1000,\n" +
+			"  \"payload\" : {\n" +
+			"    \"id\" : 10,\n" +
+			"    \"name\" : \"my name\",\n" +
+			"    \"value1\" : \"test " + LocalDateTime.now().toString("YYYY-MM-dd") + "\",\n" +
+			"    \"value2\" : \"test " + LocalDateTime.now().toString("YYYY-MM-dd HH") + "\",\n" +
+			"    \"value3\" : 2,\n" +
+			"    \"tenant\" : \"tenant1\"\n" +
+			"  },\n" +
+			"  \"jobId\" : \"job1\"\n" +
+			"}", job.getPayload());
 		assertNotNull(job.getStartTime());
 		assertEquals(LocalDate.now(), job.getStartTime().toLocalDate());
 		assertEquals(JobStatus.STARTED, job.getStatus());

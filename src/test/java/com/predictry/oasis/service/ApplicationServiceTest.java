@@ -123,7 +123,7 @@ public class ApplicationServiceTest extends TestCase {
 		Task task = new Task();
 		task.setPayload("{\"test\": true}");
 		app.addTask(task);
-		applicationService.add(app);
+		applicationService.update(app);
 		
 		// Check if new task is added
 		List<Application> apps = applicationService.findAll();

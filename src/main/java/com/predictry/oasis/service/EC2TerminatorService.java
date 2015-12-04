@@ -45,7 +45,7 @@ public class EC2TerminatorService {
 		LOG.info("Checking for instances to be stopped...");
 		serviceProviderRepository.findAll().stream().filter(s -> {
 			ec2Service.checkStatus(s);
-			return s.isRunning();
+			return s.isRunning() && (s.getLastStarted() != null);
 		}).forEach(serviceProvider -> {
 			List<Job> jobs = jobRepository.findByApplicationServiceProvider(serviceProvider);
 			boolean done = jobs.isEmpty() ? true : jobs.stream().anyMatch(j -> j.getStatus() != JobStatus.STARTED);

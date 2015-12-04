@@ -53,7 +53,18 @@ public class ServiceProviderController {
 	
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String save(@ModelAttribute ServiceProvider serviceProvider) {
-		serviceProviderRepository.save(serviceProvider);
+		if (serviceProvider.getId() != null) {
+			ServiceProvider oldServiceProvider = serviceProviderRepository.findOne(serviceProvider.getId());
+			oldServiceProvider.setInstanceId(serviceProvider.getInstanceId());
+			oldServiceProvider.setLastChecked(serviceProvider.getLastChecked());
+			oldServiceProvider.setLastStarted(serviceProvider.getLastStarted());
+			oldServiceProvider.setName(serviceProvider.getName());
+			oldServiceProvider.setRegion(serviceProvider.getRegion());
+			oldServiceProvider.setRunning(serviceProvider.isRunning());
+			serviceProviderRepository.save(oldServiceProvider);
+		} else {
+			serviceProviderRepository.save(serviceProvider);
+		}
 		return "redirect:/serviceProvider";
 	}
 	

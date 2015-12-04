@@ -80,7 +80,11 @@ public class ApplicationController {
 	
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String save(@ModelAttribute Application app) throws SchedulerException {
-		applicationService.add(app);
+		if (app.getId() != null) {
+			applicationService.update(app);
+		} else {
+			applicationService.add(app);
+		}
 		return "redirect:/app";
 	}
 	
@@ -127,7 +131,7 @@ public class ApplicationController {
 	}
 	
 	@RequestMapping(value = "/{id}/detail/save/{index}")
-	public String detailSave(@ModelAttribute Task task, @PathVariable("id") Application app, @PathVariable("index") Integer index) throws JsonParseException, JsonMappingException, IOException {
+	public String detailUpdate(@ModelAttribute Task task, @PathVariable("id") Application app, @PathVariable("index") Integer index) throws JsonParseException, JsonMappingException, IOException {
 		// Validate Json
 		objectMapper.readValue(task.evaluatePayload(scriptEngineManager), Map.class);
 		
