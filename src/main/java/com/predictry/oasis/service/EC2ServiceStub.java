@@ -5,7 +5,14 @@ import org.springframework.stereotype.Service;
 
 import com.predictry.oasis.domain.ServiceProvider;
 
-@Service @Profile("test")
+/**
+ * This is a stub class for <code>EC2Service</code> that does nothing.
+ * It is useful to run the application without affecting any EC2 instances.
+ * 
+ * @author jocki
+ *
+ */
+@Service @Profile("!prod")
 public class EC2ServiceStub implements EC2Service {
 
 	@Override

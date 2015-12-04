@@ -12,6 +12,9 @@
 	        <h4>Reason</h4>
 	        <pre th:text="${job.reason}"></pre>
         </div>
+        <div>
+            <a class="btn" role="button" id="retry" th:href="@{'/job/' + ${job.id} + '/retry'}">Retry</a>
+        </div>
     </div>
   
   </body>

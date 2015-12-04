@@ -14,7 +14,6 @@ import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 import com.predictry.oasis.job.ApplicationJob;
 import com.predictry.oasis.job.EC2TerminatorJob;
 import com.predictry.oasis.job.HeartbeatJob;
-import com.predictry.oasis.job.KeeperJob;
 import com.predictry.oasis.job.MetricJob;
 
 /**
@@ -41,8 +40,6 @@ public class SchedulerConfig {
 	public static final String QUARTZ_EC2_TERMINATOR_GROUP = "EC2_TERMINATOR_GROUP";
 	public static final String QUARTZ_EC2_TERMINATOR_NAME = "EC2_TERMINATOR_JOB";
 	public static final int QUARTZ_EC2_JOB_INTERVAL =  30 * 60 * 1000; // 30 minutes
-	
-	public static final int KEEPER_JOB_RETRY_INTERVAL = 30 * 60 * 1000;  // 30 minutes
 	
 	public static final String QUARTZ_APP_GROUP = "APP_GROUP";
 	
@@ -79,21 +76,6 @@ public class SchedulerConfig {
 		metricJobFactory.setName(QUARTZ_METRIC_JOB_NAME);
 		metricJobFactory.setDurability(true);
 		return metricJobFactory;
-	}
-	
-	/**
-	 * Bean definition for keeper job that retry application jobs if they failed.
-	 * 
-	 * @return <code>JobDetailFactoryBean</code>.
-	 */
-	@Bean
-	public JobDetailFactoryBean keeperJobFactory() {
-		JobDetailFactoryBean keeperJobFactory = new JobDetailFactoryBean();
-		keeperJobFactory.setJobClass(KeeperJob.class);
-		keeperJobFactory.setGroup(QUARTZ_KEEPER_JOB_GROUP);
-		keeperJobFactory.setName(QUARTZ_KEEPER_JOB_NAME);
-		keeperJobFactory.setDurability(true);
-		return keeperJobFactory;
 	}
 	
 	/**
@@ -157,19 +139,6 @@ public class SchedulerConfig {
 	}
 	
 	/**
-	 * Bean definition for Quartz Trigger that executes keeper service.
-	 * 
-	 * @return <code>SimpleTriggerFactoryBean</code>.
-	 */
-	@Bean
-	public SimpleTriggerFactoryBean keeperTriggerFactory() {
-		SimpleTriggerFactoryBean keeperTriggerFactory = new SimpleTriggerFactoryBean();
-		keeperTriggerFactory.setJobDetail(keeperJobFactory().getObject());
-		keeperTriggerFactory.setRepeatInterval(QUARTZ_KEEPER_JOB_INTERVAL);
-		return keeperTriggerFactory;
-	}
-	
-	/**
 	 * Bean definition for EC2 terminator service.
 	 * 
 	 * @return <code>CronTriggerFactoryBean</code>.
@@ -199,9 +168,9 @@ public class SchedulerConfig {
 		props.put("org.quartz.jobStore.useProperties", "true");
 		schedulerFactory.setQuartzProperties(props);
 		schedulerFactory.setTriggers(heartbeatTriggerFactory().getObject(), metricTriggerFactory().getObject(), 
-			keeperTriggerFactory().getObject(), ec2TerminatorTriggerFactory().getObject());
+			ec2TerminatorTriggerFactory().getObject());
 		schedulerFactory.setJobDetails(applicationJobFactory().getObject(), metricJobFactory().getObject(), 
-			keeperJobFactory().getObject(), ec2TerminatorJobFactory().getObject());
+			ec2TerminatorJobFactory().getObject());
 		return schedulerFactory;
 	}
 	

@@ -157,11 +157,11 @@ public class Application {
 	}
 	
 	public List<Job> createJobs(ObjectMapper objectMapper, ScriptEngineManager scriptEngineManager) throws JsonParseException, JsonMappingException, IOException {
+		List<Job> result = new ArrayList<>();
 		if (tasks.isEmpty()) {
 			LOG.warn("No task to execute for application [" + getName() + "]");
-			return null;
+			return result;
 		}
-		List<Job> result = new ArrayList<>();
 		for (int taskIndex = 0; taskIndex < tasks.size(); taskIndex++) {
 			Task task = tasks.get(taskIndex);
 			String jobId = String.format("%s_%s_%s", getName(), String.valueOf(taskIndex), LocalDateTime.now().toString("YYYY-MM-dd_HH:mm:ss_SSSS"));

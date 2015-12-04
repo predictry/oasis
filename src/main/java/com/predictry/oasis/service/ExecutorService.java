@@ -73,6 +73,7 @@ public class ExecutorService {
 		LOG.info("Retrying job " + job.getName());
 		Application app = job.getApplication();
 		if (job.retry()) {
+			ec2Service.startInstance(app.getServiceProvider());
 			jmsTemplate.send(app.getQueueName(), new JsonMessageCreator(objectMapper, job.getPayloadAsMap()));
 		} else {
 			LOG.warn("Stop retrying job [" + job + "]");

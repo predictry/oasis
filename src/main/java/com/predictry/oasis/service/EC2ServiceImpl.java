@@ -25,7 +25,7 @@ import com.predictry.oasis.repository.ServiceProviderRepository;
  * @author jocki
  *
  */
-@Service @Profile("!test")
+@Service @Profile("prod")
 @Transactional
 public class EC2ServiceImpl implements EC2Service {
 	
