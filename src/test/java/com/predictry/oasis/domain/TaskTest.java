@@ -47,7 +47,7 @@ public class TaskTest {
 		assertEquals(10, nestedPayload.get("id"));
 		assertEquals("my name", nestedPayload.get("name"));
 		assertEquals("test " + LocalDateTime.now().toString("YYYY-MM-dd"), nestedPayload.get("value1"));
-		assertEquals("test " + LocalDateTime.now().toString("YYYY-MM-dd HH"), nestedPayload.get("value2"));
+		assertEquals("test " + LocalDateTime.now().toString("YYYY-MM-dd H"), nestedPayload.get("value2"));
 		assertEquals(2, nestedPayload.get("value3"));
 		
 		// Make sure job is created		
@@ -59,7 +59,7 @@ public class TaskTest {
 			"    \"id\" : 10,\n" +
 			"    \"name\" : \"my name\",\n" +
 			"    \"value1\" : \"test " + LocalDateTime.now().toString("YYYY-MM-dd") + "\",\n" +
-			"    \"value2\" : \"test " + LocalDateTime.now().toString("YYYY-MM-dd HH") + "\",\n" +
+			"    \"value2\" : \"test " + LocalDateTime.now().toString("YYYY-MM-dd H") + "\",\n" +
 			"    \"value3\" : 2,\n" +
 			"    \"tenant\" : \"tenant1\"\n" +
 			"  },\n" +

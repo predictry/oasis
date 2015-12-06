@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
@@ -39,7 +40,7 @@ public class SchedulerConfig {
 	
 	public static final String QUARTZ_EC2_TERMINATOR_GROUP = "EC2_TERMINATOR_GROUP";
 	public static final String QUARTZ_EC2_TERMINATOR_NAME = "EC2_TERMINATOR_JOB";
-	public static final int QUARTZ_EC2_JOB_INTERVAL =  30 * 60 * 1000; // 30 minutes
+	public static final String QUARTZ_EC2_TERMINATOR_CRON =  "0 15,45 * * * ?";
 	
 	public static final String QUARTZ_APP_GROUP = "APP_GROUP";
 	
@@ -49,7 +50,7 @@ public class SchedulerConfig {
 	/**
 	 * Bean definition to execute <code>hearbeatService.heartbeat()</code> 
 	 * periodically.
-	 * 
+	 * 	
 	 * @return <code>JobDetailFactoryBean</code>.
 	 */
 	@Bean
@@ -144,10 +145,10 @@ public class SchedulerConfig {
 	 * @return <code>CronTriggerFactoryBean</code>.
 	 */
 	@Bean
-	public SimpleTriggerFactoryBean ec2TerminatorTriggerFactory() {
-		SimpleTriggerFactoryBean cronTriggerFactory = new SimpleTriggerFactoryBean();
+	public CronTriggerFactoryBean ec2TerminatorTriggerFactory() {
+		CronTriggerFactoryBean cronTriggerFactory = new CronTriggerFactoryBean();
 		cronTriggerFactory.setJobDetail(ec2TerminatorJobFactory().getObject());
-		cronTriggerFactory.setRepeatInterval(QUARTZ_EC2_JOB_INTERVAL);
+		cronTriggerFactory.setCronExpression(QUARTZ_EC2_TERMINATOR_CRON);
 		return cronTriggerFactory;
 	}
 	

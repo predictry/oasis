@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.joda.time.Hours;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Minutes;
 import org.slf4j.Logger;
@@ -27,8 +26,8 @@ import com.predictry.oasis.repository.ServiceProviderRepository;
 @Transactional
 public class EC2TerminatorService {
 	
-	private static final int MIN_RUNNING_MINUTE = 5;
-	private static final int MAX_RUNNING_HOUR = 5;
+	private static final int MIN_RUNNING_MINUTES = 1 * 60;
+	private static final int MAX_RUNNING_MINUTES = 5 * 60;
 
 	private static final Logger LOG = LoggerFactory.getLogger(EC2TerminatorService.class);
 	
@@ -48,10 +47,13 @@ public class EC2TerminatorService {
 			return s.isRunning() && (s.getLastStarted() != null);
 		}).forEach(serviceProvider -> {
 			List<Job> jobs = jobRepository.findByApplicationServiceProvider(serviceProvider);
-			boolean done = jobs.isEmpty() ? true : jobs.stream().anyMatch(j -> j.getStatus() != JobStatus.STARTED);
-			int runningHours = Hours.hoursBetween(serviceProvider.getLastStarted(), LocalDateTime.now()).getHours();
+			boolean done = jobs.isEmpty() ? true : jobs.stream().allMatch(j -> 
+				(j.getStatus() == JobStatus.FINISH) || (j.getStatus() == JobStatus.FAIL));
 			int runningMinutes = Minutes.minutesBetween(serviceProvider.getLastStarted(), LocalDateTime.now()).getMinutes();
-			if (((runningMinutes > MIN_RUNNING_MINUTE) && done) || (runningHours > MAX_RUNNING_HOUR)) {
+			LOG.info("Service provider [" + serviceProvider.getName() + "] is " + (done ? "done" : "not done") + 
+					 " and has been running for " + runningMinutes + " minutes (last started is " + 
+					serviceProvider.getLastStarted() + " and now is " + LocalDateTime.now() + ")");
+			if (((runningMinutes > MIN_RUNNING_MINUTES) && done) || (runningMinutes > MAX_RUNNING_MINUTES)) {
 				ec2Service.stopInstance(serviceProvider);
 				ec2Service.checkStatus(serviceProvider);
 			}

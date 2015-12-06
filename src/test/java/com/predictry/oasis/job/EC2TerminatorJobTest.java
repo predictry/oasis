@@ -71,12 +71,37 @@ public class EC2TerminatorJobTest extends TestCase {
 	}
 	
 	@Test
-	public void testTerminateSP() {
+	public void testTerminateSP_case1() {
 		// Create finished job
-		Job job = new Job("job1", LocalDateTime.now(), "{\"test\":true}");
-		job.setApplication(app);
-		job.setStatus(JobStatus.FINISH);
-		jobRepository.save(job);
+		Job job1 = new Job("job1", LocalDateTime.now(), "{\"test\":true}");
+		job1.setApplication(app);
+		job1.setStatus(JobStatus.FINISH);
+		jobRepository.save(job1);
+		
+		Job job2 = new Job("job2", LocalDateTime.now(), "{\"test\":true}");
+		job2.setApplication(app);
+		job2.setStatus(JobStatus.FINISH);
+		jobRepository.save(job2);
+		
+		// Launch job
+		ec2TerminatorService.terminateInstances();
+		
+		// Make sure the instance is stopped
+		assertEquals(false, sp.isRunning());
+	}
+	
+	@Test
+	public void testTerminateSP_case2() {
+		// Create finished job
+		Job job1 = new Job("job1", LocalDateTime.now(), "{\"test\":true}");
+		job1.setApplication(app);
+		job1.setStatus(JobStatus.FAIL);
+		jobRepository.save(job1);
+		
+		Job job2 = new Job("job2", LocalDateTime.now(), "{\"test\":true}");
+		job2.setApplication(app);
+		job2.setStatus(JobStatus.FINISH);
+		jobRepository.save(job2);
 		
 		// Launch job
 		ec2TerminatorService.terminateInstances();
@@ -100,12 +125,17 @@ public class EC2TerminatorJobTest extends TestCase {
 	}
 	
 	@Test
-	public void testDontTerminateSP() {
+	public void testDontTerminateSP_case1() {
 		// Create unfinished job
-		Job job = new Job("job1", LocalDateTime.now(), "{\"test\":true}");
-		job.setApplication(app);
-		job.setStatus(JobStatus.STARTED);
-		jobRepository.save(job);
+		Job job1 = new Job("job1", LocalDateTime.now(), "{\"test\":true}");
+		job1.setApplication(app);
+		job1.setStatus(JobStatus.STARTED);
+		jobRepository.save(job1);
+		
+		Job job2 = new Job("job2", LocalDateTime.now(), "{\"test\":true}");
+		job2.setApplication(app);
+		job2.setStatus(JobStatus.FINISH);
+		jobRepository.save(job2);
 
 		// Launch job
 		ec2TerminatorService.terminateInstances();
@@ -115,9 +145,29 @@ public class EC2TerminatorJobTest extends TestCase {
 	}
 	
 	@Test
-	public void testDontTerminateSPLessThanFiveMinute() {
+	public void testDontTerminateSP_case2() {
 		// Create unfinished job
-		sp.setLastStarted(LocalDateTime.now().minusMinutes(1));
+		Job job1 = new Job("job1", LocalDateTime.now(), "{\"test\":true}");
+		job1.setApplication(app);
+		job1.setStatus(JobStatus.REPEAT);
+		jobRepository.save(job1);
+		
+		Job job2 = new Job("job2", LocalDateTime.now(), "{\"test\":true}");
+		job2.setApplication(app);
+		job2.setStatus(JobStatus.FINISH);
+		jobRepository.save(job2);
+
+		// Launch job
+		ec2TerminatorService.terminateInstances();
+		
+		// Make sure the instance is not stopped
+		assertEquals(true, sp.isRunning());
+	}
+	
+	@Test
+	public void testDontTerminateSPLessThanOneHour() {
+		// Create unfinished job
+		sp.setLastStarted(LocalDateTime.now().minusMinutes(30));
 		sp.setRunning(true);
 		serviceProviderRepository.save(sp);
 		

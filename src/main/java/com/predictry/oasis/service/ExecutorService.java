@@ -1,7 +1,11 @@
 package com.predictry.oasis.service;
 
 import java.io.IOException;
+import java.util.Arrays;
 
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
 import javax.script.ScriptEngineManager;
 import javax.transaction.Transactional;
 
@@ -10,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -17,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.predictry.oasis.domain.Application;
 import com.predictry.oasis.domain.Job;
+import com.predictry.oasis.domain.JobStatus;
 import com.predictry.oasis.repository.ApplicationRepository;
 import com.predictry.oasis.repository.JobRepository;
 import com.predictry.oasis.util.JsonMessageCreator;
@@ -74,11 +80,25 @@ public class ExecutorService {
 		Application app = job.getApplication();
 		if (job.retry()) {
 			ec2Service.startInstance(app.getServiceProvider());
-			jmsTemplate.send(app.getQueueName(), new JsonMessageCreator(objectMapper, job.getPayloadAsMap()));
+			jmsTemplate.send(app.getQueueName(), new MessageCreator() {
+				
+				@Override
+				public Message createMessage(Session session) throws JMSException {
+					return session.createTextMessage(job.getPayload());
+				}
+				
+			});
 		} else {
 			LOG.warn("Stop retrying job [" + job + "]");
 		}
 		jobRepository.save(job);
+	}
+	
+	public void retryAll() {
+		LOG.info("Retrying all unfinished jobs");
+		jobRepository.findByStatusIn(Arrays.asList(JobStatus.STARTED, JobStatus.REPEAT)).forEach(job -> {
+			retryExecute(job);
+		});
 	}
 	
 }
