@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.jms.JMSException;
 import javax.transaction.Transactional;
 
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +63,7 @@ public class TenantService {
 		switch (action.toLowerCase()) {
 			case "new":
 				if (tenantRepository.findOne(tenantId) == null) {
-					tenant = new Tenant(tenantId, tenantId);
+					tenant = new Tenant(tenantId, tenantId, LocalDateTime.now());
 					tenant = tenantRepository.save(tenant);
 					try {
 						applicationService.addDefault(tenant);

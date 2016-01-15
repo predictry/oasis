@@ -4,7 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
+import org.joda.time.LocalDateTime;
 
 /**
  * A specific tenant and all information about it.
@@ -24,9 +26,18 @@ public class Tenant {
 	@NotNull
 	private TenantStatus status = TenantStatus.ENABLED;
 	
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+	private LocalDateTime registeredDate;
+	
 	public Tenant(String id, String name) {
 		this.id = id;
 		this.name = name;
+	}
+	
+	public Tenant(String id, String name, LocalDateTime registeredDate) {
+		this.id = id;
+		this.name = name;
+		this.registeredDate = registeredDate;
 	}
 	
 	public Tenant() { }
@@ -53,6 +64,14 @@ public class Tenant {
 
 	public void setStatus(TenantStatus status) {
 		this.status = status;
+	}
+
+	public LocalDateTime getRegisteredDate() {
+		return registeredDate;
+	}
+
+	public void setRegisteredDate(LocalDateTime registeredDate) {
+		this.registeredDate = registeredDate;
 	}
 	
 }
