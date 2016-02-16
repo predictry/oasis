@@ -49,14 +49,7 @@ public class TenantController {
 	
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String save(@ModelAttribute Tenant tenant) throws SchedulerException {
-		if (tenant.getId() != null) {
-			Tenant oldTenant = tenantRepository.findOne(tenant.getId());
-			oldTenant.setName(tenant.getName());
-			oldTenant.setStatus(tenant.getStatus());
-			tenantRepository.save(oldTenant);
-		} else {
-			tenantRepository.saveAndFlush(tenant);
-		}
+		tenantRepository.saveAndFlush(tenant);
 		return "redirect:/tenant";
 	}
 
