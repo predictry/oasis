@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -21,13 +22,17 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.client.RestTemplate;
 
-@Configuration @Profile("test")
+@Profile("test")
+@Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories("com.predictry.oasis.repository")
 @ComponentScan("com.predictry.oasis.service")
 @Import({SchedulerConfig.class, JmsConfig.class})
 public class TestConfig {
+
+    public static final int TIMEOUT = 500;
 	
 	@Bean
 	public DataSource dataSource() {
@@ -53,6 +58,15 @@ public class TestConfig {
 		
 		return emf;
 	}
+
+    @Bean
+    public RestTemplate restTemplate() {
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+        factory.setConnectionRequestTimeout(TIMEOUT);
+        factory.setReadTimeout(TIMEOUT);
+        factory.setConnectTimeout(TIMEOUT);
+        return new RestTemplate(factory);
+    }
 	
 	@Bean
 	public JpaTransactionManager transactionManager(EntityManagerFactory emf) {

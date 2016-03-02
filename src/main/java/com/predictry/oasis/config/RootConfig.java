@@ -30,7 +30,7 @@ import java.io.FileNotFoundException;
 @Import({SchedulerConfig.class, JmsConfig.class})
 public class RootConfig {
 	
-	public static final int TIMEOUT = 500;
+	public static final int TIMEOUT = 60000;
 	
 	@Autowired
 	Environment env;
