@@ -47,8 +47,7 @@ public class JmsConfig {
 
 	@Bean(name = "queue")
 	public JmsTemplate jmsTemplateQueue() {
-		JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory());
-		return jmsTemplate;
+		return new JmsTemplate(connectionFactory());
 	}
 	
 	@Bean(name = "topic")

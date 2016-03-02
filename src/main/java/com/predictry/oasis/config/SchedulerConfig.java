@@ -34,9 +34,9 @@ public class SchedulerConfig {
 	public static final String QUARTZ_METRIC_JOB_NAME = "METRIC_JOB";
 	public static final int QUARTZ_METRIC_JOB_INTERVAL = 60 * 60 * 1000; // 1 hour
 	
-	public static final String QUARTZ_KEEPER_JOB_GROUP = "KEEPER_GROUP";
-	public static final String QUARTZ_KEEPER_JOB_NAME = "KEEPER_JOB";
-	public static final int QUARTZ_KEEPER_JOB_INTERVAL =  3 * 60 * 1000; // 3 hours
+//	public static final String QUARTZ_KEEPER_JOB_GROUP = "KEEPER_GROUP";
+//	public static final String QUARTZ_KEEPER_JOB_NAME = "KEEPER_JOB";
+//	public static final int QUARTZ_KEEPER_JOB_INTERVAL =  3 * 60 * 1000; // 3 hours
 	
 	public static final String QUARTZ_EC2_TERMINATOR_GROUP = "EC2_TERMINATOR_GROUP";
 	public static final String QUARTZ_EC2_TERMINATOR_NAME = "EC2_TERMINATOR_JOB";

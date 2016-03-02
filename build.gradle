@@ -14,7 +14,7 @@ apply plugin: 'java'
 apply plugin: 'findbugs'
 apply plugin: 'checkstyle'
 apply plugin: 'war'
-apply plugin: 'eclipse-wtp'
+apply plugin: 'idea'
 apply plugin: 'org.asciidoctor.gradle.asciidoctor'
 apply plugin: 'com.bmuschko.tomcat'
 
@@ -26,12 +26,6 @@ def warFile = 'oms.war'
 configurations {
     sshAntTask
     jdbcDriver
-}
-
-eclipse {
-	classpath {
-		downloadSources=true
-	}
 }
 
 task wrapper(type: Wrapper) {
