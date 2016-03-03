@@ -1,4 +1,4 @@
-package com.predictry.oasis.service.mail;
+package com.predictry.oasis.dto.mail;
 
 /**
  * This class represents response after calling Mandrill send mail REST API.

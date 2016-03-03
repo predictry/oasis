@@ -1,4 +1,4 @@
-package com.predictry.oasis.service.mail;
+package com.predictry.oasis.dto.mail;
 
 import java.util.ArrayList;
 import java.util.List;

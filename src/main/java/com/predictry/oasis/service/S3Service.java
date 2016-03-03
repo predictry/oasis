@@ -6,7 +6,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.*;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ListObjectsRequest;
+import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.util.IOUtils;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -80,7 +84,7 @@ public class S3Service {
         request.setPrefix(prefix);
         ObjectListing results = s3Client.listObjects(request);
         return results.getObjectSummaries().stream()
-            .filter(s -> !s.getKey().equals(prefix.endsWith("/")? prefix: prefix + "/"))
+            .filter(s -> !s.getKey().equals(prefix.endsWith("/") ? prefix : prefix + "/"))
             .map(S3ObjectSummary::getKey)
             .collect(Collectors.toList());
 	}
