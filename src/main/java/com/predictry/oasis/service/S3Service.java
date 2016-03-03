@@ -1,8 +1,13 @@
 package com.predictry.oasis.service;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.*;
+import com.amazonaws.util.IOUtils;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,5 +64,41 @@ public class S3Service {
 		LOG.info("Size for bucket [" + bucket + "] is: " + size);
 		return (long) size;
 	}
-	
+
+    /**
+     * List the content of bucket by a common prefix.
+     *
+     * @param bucket is the bucket name.
+     * @param prefix is the common prefix.  The result of this method will not contain value of <code>prefix</code>.
+     * @return a <code>List</code> that contains keys that match the common prefix in that bucket.
+     */
+	public List<String> listBucket(String bucket, String prefix) {
+        LOG.info("Listing bucket [" + bucket + "] with the following prefix [" + prefix + "]");
+		AmazonS3Client s3Client = new AmazonS3Client(new ProfileCredentialsProvider("fisher"));
+        ListObjectsRequest request = new ListObjectsRequest();
+        request.setBucketName(bucket);
+        request.setPrefix(prefix);
+        ObjectListing results = s3Client.listObjects(request);
+        return results.getObjectSummaries().stream()
+            .filter(s -> !s.getKey().equals(prefix.endsWith("/")? prefix: prefix + "/"))
+            .map(S3ObjectSummary::getKey)
+            .collect(Collectors.toList());
+	}
+
+    /**
+     * Read the content of key in bucket.
+     *
+     * @param bucket is the bucket name.
+     * @param key is the key.
+     * @return content of the file in form of <code>String</code>.
+     * @throws IOException if there is an error while read file.
+     */
+    public String read(String bucket, String key) throws IOException {
+        LOG.info("Reading file from bucket [" + bucket + "] with the following key [" + key + "]");
+        AmazonS3Client s3Client = new AmazonS3Client(new ProfileCredentialsProvider("fisher"));
+        GetObjectRequest request = new GetObjectRequest(bucket, key);
+        S3Object object = s3Client.getObject(request);
+        return IOUtils.toString(object.getObjectContent());
+    }
+
 }
