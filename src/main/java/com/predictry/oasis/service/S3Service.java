@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
@@ -99,10 +100,15 @@ public class S3Service {
      */
     public String read(String bucket, String key) throws IOException {
         LOG.info("Reading file from bucket [" + bucket + "] with the following key [" + key + "]");
-        AmazonS3Client s3Client = new AmazonS3Client(new ProfileCredentialsProvider("fisher"));
-        GetObjectRequest request = new GetObjectRequest(bucket, key);
-        S3Object object = s3Client.getObject(request);
-        return IOUtils.toString(object.getObjectContent());
+		try {
+			AmazonS3Client s3Client = new AmazonS3Client(new ProfileCredentialsProvider("fisher"));
+			GetObjectRequest request = new GetObjectRequest(bucket, key);
+			S3Object object = s3Client.getObject(request);
+			return IOUtils.toString(object.getObjectContent());
+		} catch (AmazonS3Exception ex) {
+			LOG.error("Error while reading key [" + key + "]", ex);
+			return null;
+		}
     }
 
 }

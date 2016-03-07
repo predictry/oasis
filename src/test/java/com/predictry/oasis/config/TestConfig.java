@@ -1,18 +1,7 @@
 package com.predictry.oasis.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
-import javax.script.ScriptEngineManager;
-import javax.sql.DataSource;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
+import com.predictry.oasis.util.StringTemplateResolver;
+import org.springframework.context.annotation.*;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
@@ -23,6 +12,14 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
+import org.thymeleaf.spring4.SpringTemplateEngine;
+
+import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
+import javax.script.ScriptEngineManager;
+import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 
 @Profile("test")
 @Configuration
@@ -73,6 +70,13 @@ public class TestConfig {
 		JpaTransactionManager transactionManager = new JpaTransactionManager();
 		transactionManager.setEntityManagerFactory(emf);
 		return transactionManager;
+	}
+
+	@Bean(name = "stringTemplateEngine")
+	public SpringTemplateEngine emailTemplateEngine() {
+		SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+		templateEngine.addTemplateResolver(new StringTemplateResolver());
+		return templateEngine;
 	}
 	
 	@Bean

@@ -48,9 +48,9 @@ public class S3ServiceTest extends TestCase {
 			"}\n", user1);
 	}
 
-    @Test(expected = AmazonS3Exception.class)
+    @Test
     public void testReadNonExisting() throws IOException {
-        s3Service.read("predictry", "data/tenants/latihan/history/2015/02/15/user1.json");
+        assertNull(s3Service.read("predictry", "data/tenants/latihan/history/2015/02/15/user1.json"));
     }
 
 }

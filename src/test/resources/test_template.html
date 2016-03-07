@@ -1,0 +1,26 @@
+<html>
+<body>
+<div id="duo4" class="predictry-box box-recommendation">
+    <div class="product">
+        <h3>You Bought</h3>
+        <div>
+            <a th:href="${products[0].item_url}" href="#"><img th:src="${products[0].img_url}" src="image1.png"/></a>
+            <div><a th:href="${products[0].item_url}" href="#"><span th:text="${products[0].name}">Item1</span></a></div>
+            <div>RM <span th:text="${products[0].price}">123</span></div>
+        </div>
+    </div>
+    <div class="recommendations">
+        <h3>Other People Also Bought</h3>
+        <ul>
+            <li th:each="rec : ${products[0].recs}">
+                <div>
+                    <a th:href="${rec.item_url}" href="#"><img th:src="${rec.img_url}" src="image11.png"/></a>
+                    <div><a th:href="${rec.item_url}" href="#"><span th:text="${rec.name}">Item2</span></a></div>
+                    <div>RM <span th:text="${rec.price}">123</span></div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>
