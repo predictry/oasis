@@ -83,8 +83,8 @@ public class EmailCampaignService {
                     String userId = key.substring(key.lastIndexOf('/') + 1, key.length() - 5);
                     String uri = String.format("http://fisher.predictry.com:8090/fisher/userprofile/%s/%s/%s", emailCampaign.getTenant().getId(), userId, action);
                     Map userProfile = restTemplate.getForObject(uri, Map.class);
-                    if (userProfile.containsKey("lastAction")) {
-                        LocalDateTime lastAction = (LocalDateTime) userProfile.get("lastAction");
+                    if (userProfile.containsKey("lastAction") && (userProfile.get("lastAction") != null)) {
+                        LocalDateTime lastAction = LocalDateTime.parse((String) userProfile.get("lastAction"));
                         if (lastAction.isAfter(targetDate.atStartOfDay())) {
                             return;
                         }
