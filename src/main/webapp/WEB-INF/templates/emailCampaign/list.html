@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+  <head th:replace="fragments :: head">
+  </head>  
+
+  <body>
+  
+    <div th:include="fragments :: header('emailCampaign')"></div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h3>Email Campaign</h3>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>
+	                        <a th:href="@{${url}(page=${page.number}, size=${page.size}, sort='campaignName,ASC')}">Campaign Name</a>
+                        </th>
+                        <th>
+                            <a th:href="@{${url}(page=${page.number}, size=${page.size}, sort='pongoUserId,ASC')}">User Id</a>
+                        </th>
+                        <th>
+                            <a th:href="@{${url}(page=${page.number}, size=${page.size}, sort='tenant.name,ASC')}">Tenant</a>
+                        </th>
+                    	<th>
+                    	   <a th:href="@{${url}(page=${page.number}, size=${page.size}, sort='mandrillAPIKey,ASC')}">Mandrill API Key</a>
+                    	</th>
+                        <th>
+                            <a th:href="@{${url}(page=${page.number}, size=${page.size}, sort='status,ASC')}">Status</a>
+                        </th>
+                        <th>
+                            <a th:href="@{${url}(page=${page.number}, size=${page.size}, sort='numberOfEmail,ASC')}">Emails Count</a>
+                        </th>
+                        <th>&nbsp;</th>                     
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="emailCampaign: ${emailCampaigns}">
+                        <td>
+                            <a data-toggle="modal" data-target="#campaignDetail" th:attr="data-id=${emailCampaign.id}">
+                                <span th:text="${emailCampaign.campaignName}">Campaign Name</span>
+                            </a>
+                        </td>
+                        <td>
+                            <span th:text="${emailCampaign.pongoUserId}">123</span>
+                        </td>
+                        <td>
+                            <span th:text="${emailCampaign.tenant.name}">tenant1</span>
+                        </td>
+                        <td>
+                            <span th:text="${emailCampaign.mandrillAPIKey}">123abcd456</span>
+                        </td>
+                        <td>
+                            <span th:text="${emailCampaign.status}">CREATED</span>
+                        </td>
+                        <td>
+                            <span th:text="${emailCampaign.numberOfEmail}">100</span>
+                        </td>
+                        <td>
+                            <a class="btn btn-danger btn-sm" role="button" id="delete"
+                               th:href="@{'/email_campaign_web/delete/' + ${emailCampaign.id}}">Delete</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+       <div th:include="fragments :: pagination (${page})"></div>
+   </div>
+   
+   <div class="modal fade" id="campaignDetail" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document" style="z-index: 2000;">
+            <div class="modal-content" >
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Detail</h4>
+                </div>
+                <div class="modal-body">
+                   <div id="campaignDetailContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+        
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    $('#campaignDetail').on('show.bs.modal', function(event) {
+       var id = $(event.relatedTarget).data('id');
+       var modal = $(this);
+       var path = /*[[@{/email_campaign}]]*/ '/email_campaign';
+       $.get(path + '/' + id, function(data) {
+          $('#campaignDetailContent').html('<pre>' + JSON.stringify(data, null, '  ') + '</pre>');
+       });
+    });
+    $('.btn-danger').click(function() {
+        return confirm("Are you sure?");
+    });
+    /*]]>*/
+    </script>
+    
+  </body>
+
+</html>

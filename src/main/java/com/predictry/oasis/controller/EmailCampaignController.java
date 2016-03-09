@@ -6,12 +6,15 @@ import com.predictry.oasis.service.EmailCampaignService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +31,7 @@ public class EmailCampaignController {
     private EmailCampaignService emailCampaignService;
 
     @RequestMapping(value = "/{tenant}", method = RequestMethod.POST)
-    public  Map<String, String> create(EmailCampaign emailCampaign, @PathVariable("tenant") Tenant tenant) {
+    public  Map<String, String> create(@RequestBody EmailCampaign emailCampaign, @PathVariable("tenant") Tenant tenant) {
         Map<String, String> result = new HashMap<>();
         if (tenant == null) {
             LOG.error("Can't create new campaign because can't find tenant id.");
@@ -49,6 +52,14 @@ public class EmailCampaignController {
             }
         }
         return result;
+    }
+
+    @RequestMapping(value = "/{campaignId}", method = RequestMethod.GET)
+    public EmailCampaign get(@PathVariable("campaignId") EmailCampaign emailCampaign) {
+        if (emailCampaign == null) {
+            throw new EntityNotFoundException("Can't find email campaign");
+        }
+        return emailCampaign;
     }
 
     @ExceptionHandler(Exception.class)

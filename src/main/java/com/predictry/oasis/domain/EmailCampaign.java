@@ -6,6 +6,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
@@ -33,7 +34,7 @@ public class EmailCampaign {
     @NotNull @ManyToOne
     private Tenant tenant;
 
-    @ElementCollection @NotEmpty
+    @ElementCollection(fetch = FetchType.EAGER) @NotEmpty
     private List<EmailCampaignTarget> targets = new ArrayList<>();
 
     @NotBlank

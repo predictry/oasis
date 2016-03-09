@@ -65,6 +65,10 @@ public class EmailCampaignService {
         return emailCampaign;
     }
 
+    public EmailCampaign getCampaign(Long id) {
+        return emailCampaignRepository.getOne(id);
+    }
+
     @JmsListener(containerFactory = "queueJmsListenerContainerFactory", destination = "OMS.EMAIL_CAMPAIGN")
     public void receiveEmailCampaignEvents(Map<String, Object> map) throws JMSException {
         Long campaignId = Long.valueOf(map.get("id").toString());
