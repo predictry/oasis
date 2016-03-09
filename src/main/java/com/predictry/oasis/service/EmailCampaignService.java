@@ -2,6 +2,7 @@ package com.predictry.oasis.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.predictry.oasis.domain.EmailCampaign;
+import com.predictry.oasis.domain.EmailCampaignStatus;
 import com.predictry.oasis.domain.Tenant;
 import com.predictry.oasis.domain.exception.TemplateDataNotFoundException;
 import com.predictry.oasis.dto.mail.Product;
@@ -65,10 +66,6 @@ public class EmailCampaignService {
         return emailCampaign;
     }
 
-    public EmailCampaign getCampaign(Long id) {
-        return emailCampaignRepository.getOne(id);
-    }
-
     @JmsListener(containerFactory = "queueJmsListenerContainerFactory", destination = "OMS.EMAIL_CAMPAIGN")
     public void receiveEmailCampaignEvents(Map<String, Object> map) throws JMSException {
         Long campaignId = Long.valueOf(map.get("id").toString());
@@ -79,7 +76,7 @@ public class EmailCampaignService {
 
     public void processEmailCampaign(EmailCampaign emailCampaign, String action, LocalDate targetDate) {
         String prefix = String.format("data/tenants/%s/history/%d/%02d/%02d/", emailCampaign.getTenant().getId(), targetDate.getYear(), targetDate.getMonthValue(), targetDate.getDayOfMonth());
-        s3Service.listBucket("predictry", prefix).forEach(key -> {
+        int emailSent = s3Service.listBucket("predictry", prefix).stream().mapToInt(key -> {
             try {
                 Map json = objectMapper.readValue(s3Service.read("predictry", key), Map.class);
                 if (json.containsKey("email")) {
@@ -90,7 +87,8 @@ public class EmailCampaignService {
                     if (userProfile.containsKey("lastAction") && (userProfile.get("lastAction") != null)) {
                         LocalDateTime lastAction = LocalDateTime.parse((String) userProfile.get("lastAction"));
                         if (lastAction.isAfter(targetDate.atStartOfDay())) {
-                            return;
+                            LOG.debug("User [" + userId + "] is not passive since Last action is [" + lastAction + "]");
+                            return 0;
                         }
                     }
 
@@ -104,7 +102,8 @@ public class EmailCampaignService {
                     }
                     // Don't send email if no item in history
                     if ((items == null) || items.isEmpty()) {
-                        return;
+                        LOG.debug("Can't find items for user [" + userId + "]");
+                        return 0;
                     }
 
                     try {
@@ -120,12 +119,20 @@ public class EmailCampaignService {
                         }
                     } catch (TemplateDataNotFoundException ex) {
                         LOG.warn("Not sending email to [" + json.get("email") + "]");
+                        return 0;
                     }
+                    return 1;
                 }
             } catch (IOException ex) {
                 LOG.error("Error while parsing Json [" + key + "]", ex);
             }
-        });
+            return 0;
+        }).sum();
+
+        // Update email campaign status
+        emailCampaign.setNumberOfEmail(emailSent);
+        emailCampaign.setStatus(EmailCampaignStatus.DONE);
+        LOG.info("Email campaign [" + emailCampaign.getId() + "] is done with number of emails [" + emailSent + "]");
     }
 
     public String processTemplate(EmailCampaign emailCampaign, List<String> items) throws IOException {
