@@ -86,7 +86,7 @@ public class EmailCampaignService {
                     Map userProfile = restTemplate.getForObject(uri, Map.class);
                     if (userProfile.containsKey("lastAction") && (userProfile.get("lastAction") != null)) {
                         LocalDateTime lastAction = LocalDateTime.parse((String) userProfile.get("lastAction"));
-                        if (lastAction.isAfter(targetDate.atStartOfDay())) {
+                        if (lastAction.toLocalDate().compareTo(targetDate) > 0) {
                             LOG.debug("User [" + userId + "] is not passive since Last action is [" + lastAction + "]");
                             return 0;
                         }
